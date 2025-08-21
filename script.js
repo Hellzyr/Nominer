@@ -9,7 +9,6 @@ const App = () => {
     const [auth, setAuth] = useState(null);
     const [userId, setUserId] = useState(null);
     const [employees, setEmployees] = useState([]);
-    const [xmlOutput, setXmlOutput] = useState('');
     const [view, setView] = useState('nomina');
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(true);
@@ -109,67 +108,6 @@ const App = () => {
             setMessage("Error al guardar el empleado. Intente de nuevo.");
         }
     };
-    
-    // Función para generar un documento XML para un solo empleado
-    const generateXml = (employee) => {
-        const { identificacion, razonSocial, nombreEmpleado, tipoDocumento, salarioBase, cargo, fechaIngreso, periodo, fechaPago, diasTrabajados, horasExtras, comisiones, salud, pension, prestamo, nit } = employee;
-        
-        // Calcular los totales, usando 0 si los campos no existen
-        const totalDevengos = (salarioBase || 0) + (parseFloat(horasExtras) || 0) + (parseFloat(comisiones) || 0);
-        const totalDeducciones = (parseFloat(salud) || 0) + (parseFloat(pension) || 0) + (parseFloat(prestamo) || 0);
-        const totalPagar = totalDevengos - totalDeducciones;
-
-        return `
-<NominaElectronica>
-    <Empleador>
-        <NIT>${nit || 'No especificado'}</NIT>
-        <RazonSocial>${razonSocial || 'No especificada'}</RazonSocial>
-    </Empleador>
-    <Empleado>
-        <Nombre>${nombreEmpleado}</Nombre>
-        <TipoDocumento>${tipoDocumento}</TipoDocumento>
-        <Identificacion>${identificacion}</Identificacion>
-        <SalarioBase>${salarioBase}</SalarioBase>
-        <Cargo>${cargo}</Cargo>
-        <FechaIngreso>${fechaIngreso}</FechaIngreso>
-    </Empleado>
-    <DetallesNomina>
-        <Periodo>${periodo || 'No especificado'}</Periodo>
-        <FechaPago>${fechaPago || 'No especificada'}</FechaPago>
-        <DiasTrabajados>${diasTrabajados || 'No especificados'}</DiasTrabajados>
-        <Devengos>
-            <Salario>${salarioBase}</Salario>
-            <HorasExtras>${parseFloat(horasExtras) || 0}</HorasExtras>
-            <Comisiones>${parseFloat(comisiones) || 0}</Comisiones>
-        </Devengos>
-        <Deducciones>
-            <Salud>${parseFloat(salud) || 0}</Salud>
-            <Pension>${parseFloat(pension) || 0}</Pension>
-            <Prestamo>${parseFloat(prestamo) || 0}</Prestamo>
-        </Deducciones>
-        <Totales>
-            <TotalDevengos>${totalDevengos}</TotalDevengos>
-            <TotalDeducciones>${totalDeducciones}</TotalDeducciones>
-            <TotalPagar>${totalPagar}</TotalPagar>
-        </Totales>
-    </DetallesNomina>
-</NominaElectronica>
-        `.trim();
-    };
-
-    // Función para generar XML de todos los empleados
-    const handleGenerateAllXml = () => {
-        if (employees.length === 0) {
-            setMessage("No hay empleados para generar el XML.");
-            return;
-        }
-
-        const allXml = employees.map(emp => {
-            return `<!-- XML para el empleado: ${emp.nombreEmpleado} (${emp.identificacion}) -->\n${generateXml(emp)}\n`;
-        }).join('\n'); // Unir todos los XML en un solo string
-
-        setXmlOutput(allXml);
-    };
 
     // Componente de menú lateral
     const Sidebar = () => (
@@ -189,7 +127,7 @@ const App = () => {
                                 <line x1="16" x2="8" y1="17" y2="17"/>
                                 <line x1="10" x2="8" y1="9" y2="9"/>
                             </svg>
-                            Generar Nómina
+                            Gestión de Empleados
                         </a>
                     </li>
                     <li>
@@ -200,7 +138,7 @@ const App = () => {
                                 <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
                                 <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                             </svg>
-                            Empleados
+                            Ver Empleados
                         </a>
                     </li>
                 </ul>
@@ -279,11 +217,11 @@ const App = () => {
         </div>
     );
 
-    // Componente de la lista de empleados y generación de XML
+    // Componente de la lista de empleados
     const EmployeeList = () => (
         <div className="form-container">
             <p className="text-sm text-gray-600 mb-8 text-center sm:text-base">
-                Lista de todos los empleados guardados.
+                Aquí puedes ver todos los empleados guardados. El procesamiento se hará con un script de Python.
             </p>
             <hr className="border-gray-200 mb-8" />
 
@@ -302,26 +240,16 @@ const App = () => {
                             {employees.map(emp => (
                                 <tr key={emp.id}>
                                     <td>{emp.nombreEmpleado}</td>
-                                    <td>${emp.identificacion}</td>
+                                    <td>{emp.identificacion}</td>
                                     <td>${emp.salarioBase}</td>
                                     <td>{emp.cargo}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-
-                    <div className="mt-8 flex justify-center">
-                        <button onClick={handleGenerateAllXml}>
-                            Generar XML de todos los empleados
-                        </button>
+                    <div className="mt-8 text-center text-gray-500">
+                        <p>Para generar la nómina, ejecuta el script de Python con los datos de esta base de datos.</p>
                     </div>
-
-                    {xmlOutput && (
-                        <div className="xml-output" style={{ display: 'block' }}>
-                            <h3 className="text-xl font-bold text-gray-800 mb-4">XML de Nómina Generado</h3>
-                            <pre dangerouslySetInnerHTML={{ __html: xmlOutput.replace(/<(\/?\w+)/g, '<span class="tag">&lt;$1')}}></pre>
-                        </div>
-                    )}
                 </>
             ) : (
                 <p className="text-center text-gray-500">No hay empleados guardados. Agregue uno primero.</p>
@@ -338,7 +266,7 @@ const App = () => {
         <div className="flex w-full">
             <Sidebar />
             <main className="flex-1 flex flex-col">
-                <Header title={view === 'nomina' ? 'Gestión de Empleados' : 'Generar Nómina'} />
+                <Header title={view === 'nomina' ? 'Gestión de Empleados' : 'Nómina Electrónica'} />
                 <div className="main-content">
                     {view === 'nomina' ? <EmployeeForm /> : <EmployeeList />}
                 </div>
@@ -351,6 +279,4 @@ const App = () => {
 const container = document.getElementById('root');
 const root = createRoot(container);
 root.render(<App />);
-
-
 
