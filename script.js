@@ -2,14 +2,6 @@
 const { useState, useEffect } = React;
 const { createRoot } = ReactDOM;
 
-// Definir los colores principales para el tema
-const colors = {
-  primary: '#132F63',
-  secondary: '#FABB5A',
-  background: '#F8F9FA',
-  text: '#6B7280',
-};
-
 // Componente principal de la aplicación
 const App = () => {
     // Definir estados para la aplicación
@@ -51,11 +43,12 @@ const App = () => {
                             await firebaseAuth.signInAnonymously();
                         }
                     }
-                    setLoading(false);
                 });
             } catch (error) {
                 console.error("Error al inicializar Firebase:", error);
                 setMessage("Error al conectar con la base de datos. Intente recargar la página.");
+            } finally {
+                // Esta línea garantiza que el estado de carga siempre termine
                 setLoading(false);
             }
         };
@@ -226,7 +219,7 @@ const App = () => {
         <header>
             <h1>{title}</h1>
             <div className="flex items-center space-x-4">
-                <div className="h-10 w-10 rounded-full" style={{ backgroundColor: colors.secondary }}>
+                <div className="h-10 w-10 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold">
                     UN
                 </div>
             </div>
@@ -243,7 +236,7 @@ const App = () => {
             
             <form onSubmit={handleAddEmployee} className="form-grid">
                 <div className="full-span">
-                    <h2 className="text-2xl font-bold mb-4" style={{ color: colors.primary }}>Datos del Empleado</h2>
+                    <h2 className="text-2xl font-bold mb-4 text-blue-800">Datos del Empleado</h2>
                     <div className="space-y-6">
                         <div>
                             <label htmlFor="nombreEmpleado" className="block text-sm font-medium text-gray-700">Nombre del Empleado</label>
@@ -281,7 +274,7 @@ const App = () => {
                         Guardar Empleado
                     </button>
                 </div>
-                {message && <p className="full-span text-center text-sm mt-4" style={{ color: colors.primary }}>{message}</p>}
+                {message && <p className="full-span text-center text-sm mt-4 text-blue-800">{message}</p>}
             </form>
         </div>
     );
@@ -309,7 +302,7 @@ const App = () => {
                             {employees.map(emp => (
                                 <tr key={emp.id}>
                                     <td>{emp.nombreEmpleado}</td>
-                                    <td>{emp.identificacion}</td>
+                                    <td>${emp.identificacion}</td>
                                     <td>${emp.salarioBase}</td>
                                     <td>{emp.cargo}</td>
                                 </tr>
@@ -338,7 +331,7 @@ const App = () => {
 
     // Renderizar la interfaz según el estado
     if (loading) {
-        return <div className="p-8 text-center text-gray-500">Cargando...</div>;
+        return <div className="p-8 text-center text-gray-500 text-xl font-semibold">Cargando...</div>;
     }
 
     return (
@@ -358,4 +351,6 @@ const App = () => {
 const container = document.getElementById('root');
 const root = createRoot(container);
 root.render(<App />);
+
+
 
