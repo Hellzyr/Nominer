@@ -1,331 +1,393 @@
-// --- Parámetros base (ajústalos por año) ---
-const SALARIO_MINIMO_2025 = 1423500;
-const AUXILIO_TRANSPORTE_2025 = 200000;
+// Importar los módulos de Firebase
+// La importación de React y ReactDOM se hace desde el HTML
+// import React, { useState, useEffect } from 'react';
+// import ReactDOM from 'react-dom';
 
-// --- Cálculo de nómina ---
-function calcularNomina() {
-  const salarioBase = +document.getElementById('salarioBase').value || 0;
-  const diasTrabajados = +document.getElementById('diasTrabajados').value || 0;
+const { useState, useEffect } = React;
+const { render } = ReactDOM;
 
-  // Otros devengados ingresados como valor monetario directo
-  const horasExtras = +document.getElementById('horasExtras').value || 0;
-  const recargosNocturnos = +document.getElementById('recargosNocturnos').value || 0;
-  const dominicalesFestivos = +document.getElementById('dominicalesFestivos').value || 0;
-  const propinas = +document.getElementById('propinas').value || 0;
-  const comisiones = +document.getElementById('comisiones').value || 0;
-  const bonificaciones = +document.getElementById('bonificaciones').value || 0;
+// Importar Firebase y Firestore (usando un truco para que funcione en el navegador)
+const firebaseApp = typeof firebase !== 'undefined' ? firebase.initializeApp : null;
+const firestore = typeof firebase !== 'undefined' ? firebase.firestore : null;
+const auth = typeof firebase !== 'undefined' ? firebase.auth : null;
 
-  const libranzas = +document.getElementById('libranzas').value || 0;
-  const retenciones = +document.getElementById('retenciones').value || 0;
+// URL del CDN de Firebase para usar en el script
+const firebaseCDN = 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+const firestoreCDN = 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
+const authCDN = 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
 
-  // Sueldo proporcional al periodo trabajado
-  const sueldoDevengado = (salarioBase / 30) * diasTrabajados;
+// Definir los colores principales para el tema
+const colors = {
+  primary: '#132F63',
+  secondary: '#FABB5A',
+  background: '#F8F9FA',
+  text: '#6B7280',
+};
 
-  // Auxilio de transporte (si gana <= 2 SMMLV)
-  const auxilioTransporte = salarioBase <= (SALARIO_MINIMO_2025 * 2) ? AUXILIO_TRANSPORTE_2025 : 0;
+// Componente principal de la aplicación
+const App = () => {
+    // Definir estados para la aplicación
+    const [db, setDb] = useState(null);
+    const [auth, setAuth] = useState(null);
+    const [userId, setUserId] = useState(null);
+    const [employees, setEmployees] = useState([]);
+    const [xmlOutput, setXmlOutput] = useState('');
+    const [view, setView] = useState('nomina');
+    const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(true);
 
-  // Deducciones obligatorias estándar (empleado)
-  const deduccionSalud = sueldoDevengado * 0.04;
-  const deduccionPension = sueldoDevengado * 0.04;
+    // useEffect para inicializar Firebase y manejar la autenticación
+    useEffect(() => {
+        const initFirebase = async () => {
+            try {
+                // Ensure Firebase SDKs are loaded
+                await Promise.all([
+                    loadScript(firebaseCDN),
+                    loadScript(firestoreCDN),
+                    loadScript(authCDN)
+                ]);
 
-  // Provisiones mensuales (contables)
-  const cesantias = (sueldoDevengado + auxilioTransporte) * 0.0833;
-  const interesesCesantias = cesantias * 0.01; // ~1% mensual aprox (12% anual prorr.)
-  const primaServicios = (sueldoDevengado + auxilioTransporte) * 0.0833;
-  const vacaciones = sueldoDevengado * 0.0417;
+                // Read global variables for config and auth token
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-  // Liquidación (opcional) — cálculo simple proporcional
-  const fechaInicioStr = document.getElementById('fechaInicioContrato').value;
-  const fechaFinStr = document.getElementById('fechaFinContrato').value;
-  let liquidacionData = null;
-  let totalDevengadoLiquidacion = 0;
+                // Initialize Firebase app
+                const app = firebase.initializeApp(firebaseConfig);
+                const firestore = firebase.firestore(app);
+                const firebaseAuth = firebase.auth(app);
 
-  if (fechaInicioStr && fechaFinStr) {
-    const fi = new Date(fechaInicioStr + 'T00:00:00');
-    const ff = new Date(fechaFinStr + 'T00:00:00');
-    const diffDays = Math.max(0, Math.ceil(Math.abs(ff - fi) / (1000 * 60 * 60 * 24)));
-    const salarioProporcional = (salarioBase / 360) * diffDays;
-    const cesantiasLiquidadas = (salarioBase * diffDays) / 360;
-    const interesesCesantiasLiquidados = (cesantiasLiquidadas * diffDays * 0.12) / 360;
-    const primaLiquidada = (salarioBase * diffDays) / 360;
-    const vacacionesLiquidadas = (salarioBase * diffDays) / 720;
+                setDb(firestore);
+                setAuth(firebaseAuth);
 
-    let indemnizacion = 0;
-    const causaTerminacion = document.getElementById('causaTerminacion').value;
-    if (causaTerminacion === 'sin_justa') {
-      indemnizacion = salarioBase; // simplificado (las reglas reales dependen de antigüedad)
-    }
+                // Handle user authentication
+                firebaseAuth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        setUserId(user.uid);
+                    } else {
+                        // If no authenticated user, sign in with custom token or anonymously
+                        if (initialAuthToken) {
+                            await firebaseAuth.signInWithCustomToken(initialAuthToken);
+                        } else {
+                            await firebaseAuth.signInAnonymously();
+                        }
+                    }
+                    setLoading(false);
+                });
 
-    totalDevengadoLiquidacion =
-      salarioProporcional + cesantiasLiquidadas + interesesCesantiasLiquidados +
-      primaLiquidada + vacacionesLiquidadas + indemnizacion;
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+                setMessage("Error al conectar con la base de datos. Intente recargar la página.");
+                setLoading(false);
+            }
+        };
 
-    liquidacionData = {
-      diasLiquidar: diffDays,
-      cesantias: cesantiasLiquidadas,
-      interesesCesantias: interesesCesantiasLiquidados,
-      prima: primaLiquidada,
-      vacaciones: vacacionesLiquidadas,
-      indemnizacion,
-      total: totalDevengadoLiquidacion
+        const loadScript = (src) => {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        };
+
+        initFirebase();
+    }, []);
+
+    // useEffect para escuchar los cambios en la colección de empleados
+    useEffect(() => {
+        // Solo ejecutar si Firebase y el usuario están listos
+        if (db && userId) {
+            const employeesCollectionRef = db.collection(`artifacts/${__app_id}/users/${userId}/employees`);
+
+            // Escuchar los cambios en tiempo real
+            const unsubscribe = employeesCollectionRef.onSnapshot((snapshot) => {
+                const employeesList = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                setEmployees(employeesList);
+            }, (error) => {
+                console.error("Error al obtener los empleados:", error);
+                setMessage("Error al cargar la lista de empleados.");
+            });
+
+            // Limpiar el listener cuando el componente se desmonta o los datos cambian
+            return () => unsubscribe();
+        }
+    }, [db, userId]);
+
+    // Función para manejar el envío del formulario de empleados
+    const handleAddEmployee = async (event) => {
+        event.preventDefault();
+        setMessage('');
+
+        // Obtener datos del formulario
+        const formData = new FormData(event.target);
+        const employeeData = Object.fromEntries(formData.entries());
+
+        // Validar que todos los campos requeridos estén llenos
+        const requiredFields = ['nombreEmpleado', 'tipoDocumento', 'identificacion', 'salarioBase', 'cargo', 'fechaIngreso'];
+        const isFormValid = requiredFields.every(field => employeeData[field]);
+        if (!isFormValid) {
+            setMessage("Por favor, complete todos los campos requeridos.");
+            return;
+        }
+
+        // Convertir campos numéricos
+        employeeData.salarioBase = parseFloat(employeeData.salarioBase);
+
+        try {
+            // Guardar el nuevo empleado en Firestore. Usamos el 'identificacion' como ID del documento
+            const employeeDocRef = db.collection(`artifacts/${__app_id}/users/${userId}/employees`).doc(employeeData.identificacion);
+            await employeeDocRef.set(employeeData);
+            setMessage("¡Empleado guardado con éxito!");
+            event.target.reset(); // Limpiar el formulario
+        } catch (e) {
+            console.error("Error al agregar el empleado:", e);
+            setMessage("Error al guardar el empleado. Intente de nuevo.");
+        }
     };
-  }
 
-  const totalDevengado =
-    sueldoDevengado + auxilioTransporte + horasExtras + recargosNocturnos +
-    dominicalesFestivos + propinas + comisiones + bonificaciones + totalDevengadoLiquidacion;
+    // Función para generar un documento XML para un solo empleado
+    const generateXml = (employee) => {
+        const { identificacion, razonSocial, nombreEmpleado, tipoDocumento, salarioBase, cargo, fechaIngreso, periodo, fechaPago, diasTrabajados, horasExtras, comisiones, salud, pension, prestamo, nit } = employee;
+        
+        // Calcular los totales, usando 0 si los campos no existen
+        const totalDevengos = (salarioBase || 0) + (parseFloat(horasExtras) || 0) + (parseFloat(comisiones) || 0);
+        const totalDeducciones = (parseFloat(salud) || 0) + (parseFloat(pension) || 0) + (parseFloat(prestamo) || 0);
+        const totalPagar = totalDevengos - totalDeducciones;
 
-  const totalDeducciones = deduccionSalud + deduccionPension + libranzas + retenciones;
-  const netoPagar = totalDevengado - totalDeducciones;
+        return `
+<NominaElectronica>
+    <Empleador>
+        <NIT>${nit || 'No especificado'}</NIT>
+        <RazonSocial>${razonSocial || 'No especificada'}</RazonSocial>
+    </Empleador>
+    <Empleado>
+        <Nombre>${nombreEmpleado}</Nombre>
+        <TipoDocumento>${tipoDocumento}</TipoDocumento>
+        <Identificacion>${identificacion}</Identificacion>
+        <SalarioBase>${salarioBase}</SalarioBase>
+        <Cargo>${cargo}</Cargo>
+        <FechaIngreso>${fechaIngreso}</FechaIngreso>
+    </Empleado>
+    <DetallesNomina>
+        <Periodo>${periodo || 'No especificado'}</Periodo>
+        <FechaPago>${fechaPago || 'No especificada'}</FechaPago>
+        <DiasTrabajados>${diasTrabajados || 'No especificados'}</DiasTrabajados>
+        <Devengos>
+            <Salario>${salarioBase}</Salario>
+            <HorasExtras>${parseFloat(horasExtras) || 0}</HorasExtras>
+            <Comisiones>${parseFloat(comisiones) || 0}</Comisiones>
+        </Devengos>
+        <Deducciones>
+            <Salud>${parseFloat(salud) || 0}</Salud>
+            <Pension>${parseFloat(pension) || 0}</Pension>
+            <Prestamo>${parseFloat(prestamo) || 0}</Prestamo>
+        </Deducciones>
+        <Totales>
+            <TotalDevengos>${totalDevengos}</TotalDevengos>
+            <TotalDeducciones>${totalDeducciones}</TotalDeducciones>
+            <TotalPagar>${totalPagar}</TotalPagar>
+        </Totales>
+    </DetallesNomina>
+</NominaElectronica>
+        `.trim();
+    };
 
-  return {
-    sueldo: sueldoDevengado,
-    auxilio_transporte: auxilioTransporte,
-    horas_extras: horasExtras,
-    recargosNocturnos,
-    dominicalesFestivos,
-    propinas,
-    comisiones,
-    bonificaciones,
-    salud: deduccionSalud,
-    pension: deduccionPension,
-    libranzas,
-    retenciones,
-    cesantias,
-    interesesCesantias,
-    primaServicios,
-    vacaciones,
-    totalDevengado,
-    totalDeducciones,
-    netoPagar,
-    liquidacionData
-  };
-}
+    // Función para generar XML de todos los empleados
+    const handleGenerateAllXml = () => {
+        if (employees.length === 0) {
+            setMessage("No hay empleados para generar el XML.");
+            return;
+        }
 
-// Actualiza tarjetas de resumen y sección de liquidación
-function actualizarResumen() {
-  const r = calcularNomina();
-  const fmt = v => v.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+        const allXml = employees.map(emp => {
+            return `<!-- XML para el empleado: ${emp.nombreEmpleado} (${emp.identificacion}) -->\n${generateXml(emp)}\n`;
+        }).join('\n'); // Unir todos los XML en un solo string
 
-  document.getElementById('totalDevengadoDisplay').textContent = fmt(r.totalDevengado);
-  document.getElementById('totalDeduccionesDisplay').textContent = fmt(r.totalDeducciones);
-  document.getElementById('netoPagarDisplay').textContent = fmt(r.netoPagar);
+        setXmlOutput(allXml);
+    };
 
-  document.getElementById('cesantiasDisplay').textContent = fmt(r.cesantias);
-  document.getElementById('interesesCesantiasDisplay').textContent = fmt(r.interesesCesantias);
-  document.getElementById('primaServiciosDisplay').textContent = fmt(r.primaServicios);
-  document.getElementById('vacacionesDisplay').textContent = fmt(r.vacaciones);
+    // Componente de menú lateral
+    const Sidebar = () => (
+        <aside className="sidebar">
+            <div className="mb-8">
+                <h1 className="text-3xl font-extrabold text-white">Nomina</h1>
+                <h2 className="text-xs font-light text-gray-300">Software para la DIAN</h2>
+            </div>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#" onClick={() => setView('nomina')} className={view === 'nomina' ? 'active-menu' : ''}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" x2="8" y1="13" y2="13"/>
+                                <line x1="16" x2="8" y1="17" y2="17"/>
+                                <line x1="10" x2="8" y1="9" y2="9"/>
+                            </svg>
+                            Generar Nómina
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onClick={() => setView('employees')} className={view === 'employees' ? 'active-menu' : ''}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            Empleados
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            {userId && (
+                <div className="mt-auto text-sm text-gray-400">
+                    <p>ID de usuario:</p>
+                    <p className="break-all font-mono">{userId}</p>
+                </div>
+            )}
+        </aside>
+    );
 
-  const block = document.getElementById('liquidacionResultados');
-  if (r.liquidacionData) {
-    document.getElementById('diasLiquidarDisplay').textContent = r.liquidacionData.diasLiquidar;
-    document.getElementById('vacacionesLiquidadasDisplay').textContent = fmt(r.liquidacionData.vacaciones);
-    document.getElementById('cesantiasLiquidadasDisplay').textContent = fmt(r.liquidacionData.cesantias);
-    document.getElementById('primaLiquidadaDisplay').textContent = fmt(r.liquidacionData.prima);
-    document.getElementById('indemnizacionDisplay').textContent = fmt(r.liquidacionData.indemnizacion);
-    block.classList.remove('hidden');
-  } else {
-    block.classList.add('hidden');
-  }
-}
+    // Componente de encabezado
+    const Header = ({ title }) => (
+        <header>
+            <h1>{title}</h1>
+            <div className="flex items-center space-x-4">
+                <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center text-white font-bold">
+                    UN
+                </div>
+            </div>
+        </header>
+    );
 
-// --- Generación de XML (estructura base UBL DIAN-like) ---
-function generarXML(input, calculo) {
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString('<NominaElectronica/>', 'text/xml');
-  const root = xmlDoc.documentElement;
+    // Componente del formulario para agregar empleados
+    const EmployeeForm = () => (
+        <div className="form-container">
+            <p className="text-sm text-gray-600 mb-8 text-center sm:text-base">
+                Ingresa los datos del empleado para agregarlo a la base de datos.
+            </p>
+            <hr className="border-gray-200 mb-8" />
+            
+            <form onSubmit={handleAddEmployee} className="form-grid">
+                <div className="full-span">
+                    <h2 className="text-2xl font-bold mb-4" style={{ color: colors.primary }}>Datos del Empleado</h2>
+                    <div className="space-y-6">
+                        <div>
+                            <label htmlFor="nombreEmpleado" className="block text-sm font-medium text-gray-700">Nombre del Empleado</label>
+                            <input type="text" name="nombreEmpleado" required />
+                        </div>
+                        <div>
+                            <label htmlFor="tipoDocumento" className="block text-sm font-medium text-gray-700">Tipo de Documento</label>
+                            <select name="tipoDocumento" required>
+                                <option value="CC">Cédula de Ciudadanía (CC)</option>
+                                <option value="CE">Cédula de Extranjería (CE)</option>
+                                <option value="PA">Pasaporte (PA)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label htmlFor="identificacion" className="block text-sm font-medium text-gray-700">Número de Documento</label>
+                            <input type="text" name="identificacion" required />
+                        </div>
+                        <div>
+                            <label htmlFor="salarioBase" className="block text-sm font-medium text-gray-700">Salario Básico Mensual</label>
+                            <input type="number" name="salarioBase" required />
+                        </div>
+                        <div>
+                            <label htmlFor="cargo" className="block text-sm font-medium text-gray-700">Cargo</label>
+                            <input type="text" name="cargo" required />
+                        </div>
+                        <div>
+                            <label htmlFor="fechaIngreso" className="block text-sm font-medium text-gray-700">Fecha de Ingreso</label>
+                            <input type="date" name="fechaIngreso" required />
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="full-span mt-8 flex justify-center">
+                    <button type="submit">
+                        Guardar Empleado
+                    </button>
+                </div>
+                {message && <p className="full-span text-center text-sm mt-4 text-blue-600">{message}</p>}
+            </form>
+        </div>
+    );
 
-  // Namespaces y metadatos mínimos (placeholders)
-  root.setAttribute('xmlns', 'urn:dian:gov:co:facturaelectronica:NominaIndividual');
-  root.setAttribute('xmlns:cbc', 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2');
-  root.setAttribute('xmlns:cac', 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2');
-  root.setAttribute('version', '1.0');
+    // Componente de la lista de empleados y generación de XML
+    const EmployeeList = () => (
+        <div className="form-container">
+            <p className="text-sm text-gray-600 mb-8 text-center sm:text-base">
+                Lista de todos los empleados guardados.
+            </p>
+            <hr className="border-gray-200 mb-8" />
 
-  // Encabezado
-  const enc = xmlDoc.createElement('Encabezado');
-  enc.appendChild(elem(xmlDoc, 'NumeroNomina', '1'));
-  enc.appendChild(elem(xmlDoc, 'PeriodoInicio', input.periodoInicio));
-  enc.appendChild(elem(xmlDoc, 'PeriodoFin', input.periodoFin));
-  enc.appendChild(elem(xmlDoc, 'FechaGeneracion', new Date().toISOString().slice(0,10)));
-  enc.appendChild(elem(xmlDoc, 'FormaPago', input.formaPago));
-  root.appendChild(enc);
+            {employees.length > 0 ? (
+                <>
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Identificación</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salario</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cargo</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {employees.map(emp => (
+                                <tr key={emp.id}>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{emp.nombreEmpleado}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{emp.identificacion}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${emp.salarioBase}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{emp.cargo}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
 
-  // Empleador
-  const emp = xmlDoc.createElement('Empleador');
-  emp.appendChild(elem(xmlDoc, 'NIT', input.nit));
-  emp.appendChild(elem(xmlDoc, 'RazonSocial', input.razonSocial));
-  emp.appendChild(elem(xmlDoc, 'Direccion', input.direccion || ''));
-  emp.appendChild(elem(xmlDoc, 'Municipio', input.municipio || ''));
-  emp.appendChild(elem(xmlDoc, 'CodigoPostal', input.codigoPostal || ''));
-  root.appendChild(emp);
+                    <div className="mt-8 flex justify-center">
+                        <button onClick={handleGenerateAllXml}>
+                            Generar XML de todos los empleados
+                        </button>
+                    </div>
 
-  // Empleado
-  const per = xmlDoc.createElement('Empleado');
-  per.appendChild(elem(xmlDoc, 'TipoDocumento', input.tipoDocumento));
-  per.appendChild(elem(xmlDoc, 'Identificacion', input.identificacion));
-  per.appendChild(elem(xmlDoc, 'Nombre', input.nombreEmpleado));
-  per.appendChild(elem(xmlDoc, 'Cargo', input.cargo));
-  per.appendChild(elem(xmlDoc, 'TipoContrato', input.tipoContrato));
-  per.appendChild(elem(xmlDoc, 'FechaInicioContrato', input.fechaInicioContrato));
-  per.appendChild(elem(xmlDoc, 'CentroCosto', input.centroCosto));
-  root.appendChild(per);
+                    {xmlOutput && (
+                        <div className="xml-output">
+                            <h3 className="text-xl font-bold text-gray-800 mb-4">XML de Nómina Generado</h3>
+                            <pre dangerouslySetInnerHTML={{ __html: xmlOutput.replace(/<(\/?\w+)/g, '<span class="tag">&lt;$1')}}></pre>
+                        </div>
+                    )}
+                </>
+            ) : (
+                <p className="text-center text-gray-500">No hay empleados guardados. Agregue uno primero.</p>
+            )}
+        </div>
+    );
 
-  // Devengados
-  const dev = xmlDoc.createElement('Devengados');
-  dev.appendChild(money(xmlDoc, 'Sueldo', calculo.sueldo));
-  dev.appendChild(money(xmlDoc, 'AuxilioTransporte', calculo.auxilio_transporte));
-  dev.appendChild(money(xmlDoc, 'HorasExtras', calculo.horas_extras));
-  dev.appendChild(money(xmlDoc, 'RecargosNocturnos', calculo.recargosNocturnos));
-  dev.appendChild(money(xmlDoc, 'DominicalesFestivos', calculo.dominicalesFestivos));
-  dev.appendChild(money(xmlDoc, 'Propinas', calculo.propinas));
-  dev.appendChild(money(xmlDoc, 'Comisiones', calculo.comisiones));
-  dev.appendChild(money(xmlDoc, 'Bonificaciones', calculo.bonificaciones));
-  root.appendChild(dev);
-
-  // Deducciones
-  const ded = xmlDoc.createElement('Deducciones');
-  ded.appendChild(money(xmlDoc, 'Salud', calculo.salud));
-  ded.appendChild(money(xmlDoc, 'Pension', calculo.pension));
-  ded.appendChild(money(xmlDoc, 'Libranzas', calculo.libranzas));
-  ded.appendChild(money(xmlDoc, 'Retencion', calculo.retenciones));
-  root.appendChild(ded);
-
-  // Provisiones
-  const prov = xmlDoc.createElement('Provisiones');
-  prov.appendChild(money(xmlDoc, 'Cesantias', calculo.cesantias));
-  prov.appendChild(money(xmlDoc, 'InteresesCesantias', calculo.interesesCesantias));
-  prov.appendChild(money(xmlDoc, 'PrimaServicios', calculo.primaServicios));
-  prov.appendChild(money(xmlDoc, 'Vacaciones', calculo.vacaciones));
-  root.appendChild(prov);
-
-  // Liquidación (si aplica)
-  if (calculo.liquidacionData) {
-    const liq = xmlDoc.createElement('LiquidacionContrato');
-    liq.appendChild(elem(xmlDoc, 'FechaFin', input.fechaFinContrato));
-    liq.appendChild(elem(xmlDoc, 'DiasLiquidar', calculo.liquidacionData.diasLiquidar));
-    liq.appendChild(money(xmlDoc, 'VacacionesLiquidadas', calculo.liquidacionData.vacaciones));
-    liq.appendChild(money(xmlDoc, 'CesantiasLiquidadas', calculo.liquidacionData.cesantias));
-    liq.appendChild(money(xmlDoc, 'PrimaLiquidada', calculo.liquidacionData.prima));
-    liq.appendChild(money(xmlDoc, 'Indemnizacion', calculo.liquidacionData.indemnizacion));
-    root.appendChild(liq);
-  }
-
-  // Totales
-  const tot = xmlDoc.createElement('Totales');
-  tot.appendChild(money(xmlDoc, 'TotalDevengado', calculo.totalDevengado));
-  tot.appendChild(money(xmlDoc, 'TotalDeducciones', calculo.totalDeducciones));
-  tot.appendChild(money(xmlDoc, 'NetoPagar', calculo.netoPagar));
-  root.appendChild(tot);
-
-  // Metadatos DIAN (placeholders para firma y proveedor tecnológico)
-  const meta = xmlDoc.createElement('DIAN');
-  meta.appendChild(elem(xmlDoc, 'SoftwareID', 'PROVEEDOR_TECH_SOFTID')); // reemplaza por el tuyo
-  meta.appendChild(elem(xmlDoc, 'SoftwarePIN', 'XXXX'));                  // reemplaza por tu pin
-  meta.appendChild(elem(xmlDoc, 'CUFE', 'CUFE-O-UUID-AQUI'));            // calculado al firmar
-  meta.appendChild(elem(xmlDoc, 'FirmaDigital', '-----BEGIN SIGNATURE-----...'));
-  root.appendChild(meta);
-
-  const serializer = new XMLSerializer();
-  return serializer.serializeToString(xmlDoc);
-}
-
-// Helpers XML
-function elem(doc, name, value) {
-  const e = doc.createElement(name);
-  if (value !== undefined && value !== null) e.textContent = String(value);
-  return e;
-}
-function money(doc, name, value) {
-  const e = doc.createElement(name);
-  e.setAttribute('moneda', 'COP');
-  e.textContent = Math.round(+value || 0);
-  return e;
-}
-
-// Manejo del formulario
-document.getElementById('nominaForm').addEventListener('submit', (event) => {
-  event.preventDefault();
-
-  const submitButton = document.getElementById('submitButton');
-  submitButton.disabled = true;
-  submitButton.textContent = 'Generando…';
-
-  const inputs = {
-    nit: document.getElementById('nit').value,
-    razonSocial: document.getElementById('razonSocial').value,
-    direccion: document.getElementById('direccion').value,
-    municipio: document.getElementById('municipio').value,
-    codigoPostal: document.getElementById('codigoPostal').value,
-    periodoInicio: document.getElementById('periodoInicio').value,
-    periodoFin: document.getElementById('periodoFin').value,
-    formaPago: document.getElementById('formaPago').value,
-
-    nombreEmpleado: document.getElementById('nombreEmpleado').value,
-    tipoDocumento: document.getElementById('tipoDocumento').value,
-    identificacion: document.getElementById('identificacion').value,
-    cargo: document.getElementById('cargo').value,
-    tipoContrato: document.getElementById('tipoContrato').value,
-    fechaInicioContrato: document.getElementById('fechaInicioContrato').value,
-    centroCosto: document.getElementById('centroCosto').value,
-    fechaFinContrato: document.getElementById('fechaFinContrato').value
-  };
-
-  // Validaciones rápidas
-  for (const [k, v] of Object.entries(inputs)) {
-    if (!v && ['direccion','municipio','codigoPostal','fechaFinContrato'].includes(k) === false) {
-      showToast(`Completa el campo: ${k}`, 'red');
-      submitButton.disabled = false;
-      submitButton.textContent = 'Generar Nómina';
-      return;
+    // Renderizar la interfaz según el estado
+    if (loading) {
+        return <div className="p-8 text-center text-gray-500">Cargando...</div>;
     }
-  }
 
-  const resultados = calcularNomina();
-  // Pinta resumen
-  actualizarResumen();
+    return (
+        <div className="flex w-full">
+            <Sidebar />
+            <main className="flex-1 flex flex-col">
+                <Header title={view === 'nomina' ? 'Generar Nómina' : 'Gestión de Empleados'} />
+                <div className="main-content">
+                    {view === 'nomina' ? <EmployeeForm /> : <EmployeeList />}
+                </div>
+            </main>
+        </div>
+    );
+};
 
-  // Genera XML
-  const xml = generarXML(inputs, resultados);
-  document.getElementById('xmlOutput').textContent = xml;
-  document.getElementById('resultsContainer').classList.remove('hidden');
-
-  submitButton.disabled = false;
-  submitButton.textContent = 'Generar Nómina';
-  showToast('¡Nómina generada con éxito!', 'green');
-});
-
-// Actualizaciones en tiempo real
-[
-  'salarioBase','diasTrabajados','horasExtras','recargosNocturnos','dominicalesFestivos',
-  'propinas','comisiones','bonificaciones','libranzas','retenciones','fechaFinContrato'
-].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('input', actualizarResumen);
-});
-
-// Copiar / Descargar
-document.getElementById('copyButton').addEventListener('click', () => {
-  const txt = document.getElementById('xmlOutput').textContent;
-  const ta = document.createElement('textarea');
-  ta.value = txt; document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-  ta.remove(); showToast('XML copiado al portapapeles', 'green');
-});
-document.getElementById('downloadButton').addEventListener('click', () => {
-  const xml = document.getElementById('xmlOutput').textContent;
-  const filename = `nomina_${document.getElementById('identificacion').value}.xml`;
-  const blob = new Blob([xml], { type: 'application/xml' });
-  const url = URL.createObjectURL(blob);
-  const a = Object.assign(document.createElement('a'), { href: url, download: filename });
-  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-  showToast('XML descargado', 'green');
-});
-
-// Toast
-function showToast(message, color = 'red') {
-  const box = document.getElementById('toast');
-  const msg = document.getElementById('toast-message');
-  msg.textContent = message;
-  box.classList.remove('hidden');
-  box.style.backgroundColor = color === 'green' ? '#27AE60' : '#F6554D';
-  setTimeout(() => box.classList.add('hidden'), 4000);
-}
+// Renderizar la aplicación en el DOM
+const container = document.getElementById('root');
+const root = ReactDOM.createRoot(container);
+root.render(React.createElement(App));
