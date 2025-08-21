@@ -1,20 +1,6 @@
-// Importar los módulos de Firebase
-// La importación de React y ReactDOM se hace desde el HTML
-// import React, { useState, useEffect } from 'react';
-// import ReactDOM from 'react-dom';
-
+// Ahora que las librerías se cargan en el HTML, podemos acceder a ellas directamente
 const { useState, useEffect } = React;
-const { render } = ReactDOM;
-
-// Importar Firebase y Firestore (usando un truco para que funcione en el navegador)
-const firebaseApp = typeof firebase !== 'undefined' ? firebase.initializeApp : null;
-const firestore = typeof firebase !== 'undefined' ? firebase.firestore : null;
-const auth = typeof firebase !== 'undefined' ? firebase.auth : null;
-
-// URL del CDN de Firebase para usar en el script
-const firebaseCDN = 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
-const firestoreCDN = 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
-const authCDN = 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
+const { createRoot } = ReactDOM;
 
 // Definir los colores principales para el tema
 const colors = {
@@ -40,19 +26,12 @@ const App = () => {
     useEffect(() => {
         const initFirebase = async () => {
             try {
-                // Ensure Firebase SDKs are loaded
-                await Promise.all([
-                    loadScript(firebaseCDN),
-                    loadScript(firestoreCDN),
-                    loadScript(authCDN)
-                ]);
-
-                // Read global variables for config and auth token
+                // Leer las variables globales para la configuración y el token de autenticación
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                 const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
                 const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-                // Initialize Firebase app
+                // Inicializar la app de Firebase
                 const app = firebase.initializeApp(firebaseConfig);
                 const firestore = firebase.firestore(app);
                 const firebaseAuth = firebase.auth(app);
@@ -60,12 +39,12 @@ const App = () => {
                 setDb(firestore);
                 setAuth(firebaseAuth);
 
-                // Handle user authentication
+                // Manejar la autenticación del usuario
                 firebaseAuth.onAuthStateChanged(async (user) => {
                     if (user) {
                         setUserId(user.uid);
                     } else {
-                        // If no authenticated user, sign in with custom token or anonymously
+                        // Si no hay usuario autenticado, inicia sesión con el token personalizado o anónimamente
                         if (initialAuthToken) {
                             await firebaseAuth.signInWithCustomToken(initialAuthToken);
                         } else {
@@ -74,24 +53,12 @@ const App = () => {
                     }
                     setLoading(false);
                 });
-
             } catch (error) {
-                console.error("Error initializing Firebase:", error);
+                console.error("Error al inicializar Firebase:", error);
                 setMessage("Error al conectar con la base de datos. Intente recargar la página.");
                 setLoading(false);
             }
         };
-
-        const loadScript = (src) => {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = src;
-                script.onload = resolve;
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-        };
-
         initFirebase();
     }, []);
 
@@ -134,7 +101,7 @@ const App = () => {
             setMessage("Por favor, complete todos los campos requeridos.");
             return;
         }
-
+        
         // Convertir campos numéricos
         employeeData.salarioBase = parseFloat(employeeData.salarioBase);
 
@@ -149,7 +116,7 @@ const App = () => {
             setMessage("Error al guardar el empleado. Intente de nuevo.");
         }
     };
-
+    
     // Función para generar un documento XML para un solo empleado
     const generateXml = (employee) => {
         const { identificacion, razonSocial, nombreEmpleado, tipoDocumento, salarioBase, cargo, fechaIngreso, periodo, fechaPago, diasTrabajados, horasExtras, comisiones, salud, pension, prestamo, nit } = employee;
@@ -259,7 +226,7 @@ const App = () => {
         <header>
             <h1>{title}</h1>
             <div className="flex items-center space-x-4">
-                <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center text-white font-bold">
+                <div className="h-10 w-10 rounded-full" style={{ backgroundColor: colors.secondary }}>
                     UN
                 </div>
             </div>
@@ -314,7 +281,7 @@ const App = () => {
                         Guardar Empleado
                     </button>
                 </div>
-                {message && <p className="full-span text-center text-sm mt-4 text-blue-600">{message}</p>}
+                {message && <p className="full-span text-center text-sm mt-4" style={{ color: colors.primary }}>{message}</p>}
             </form>
         </div>
     );
@@ -332,19 +299,19 @@ const App = () => {
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Identificación</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salario</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cargo</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Identificación</th>
+                                <th scope="col">Salario</th>
+                                <th scope="col">Cargo</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {employees.map(emp => (
                                 <tr key={emp.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{emp.nombreEmpleado}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{emp.identificacion}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${emp.salarioBase}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{emp.cargo}</td>
+                                    <td>{emp.nombreEmpleado}</td>
+                                    <td>{emp.identificacion}</td>
+                                    <td>${emp.salarioBase}</td>
+                                    <td>{emp.cargo}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -357,7 +324,7 @@ const App = () => {
                     </div>
 
                     {xmlOutput && (
-                        <div className="xml-output">
+                        <div className="xml-output" style={{ display: 'block' }}>
                             <h3 className="text-xl font-bold text-gray-800 mb-4">XML de Nómina Generado</h3>
                             <pre dangerouslySetInnerHTML={{ __html: xmlOutput.replace(/<(\/?\w+)/g, '<span class="tag">&lt;$1')}}></pre>
                         </div>
@@ -378,7 +345,7 @@ const App = () => {
         <div className="flex w-full">
             <Sidebar />
             <main className="flex-1 flex flex-col">
-                <Header title={view === 'nomina' ? 'Generar Nómina' : 'Gestión de Empleados'} />
+                <Header title={view === 'nomina' ? 'Gestión de Empleados' : 'Generar Nómina'} />
                 <div className="main-content">
                     {view === 'nomina' ? <EmployeeForm /> : <EmployeeList />}
                 </div>
@@ -389,5 +356,6 @@ const App = () => {
 
 // Renderizar la aplicación en el DOM
 const container = document.getElementById('root');
-const root = ReactDOM.createRoot(container);
-root.render(React.createElement(App));
+const root = createRoot(container);
+root.render(<App />);
+
