@@ -1,38 +1,52 @@
-/* * Estilos básicos para la aplicación de nómina.
- * Inspirado en la sintaxis de Tailwind CSS.
+/* * Estilos mejorados para la aplicación de nómina.
+ * Se ha mejorado la paleta de colores, sombras y transiciones.
  */
 
-/* Fuentes y estilos globales */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* ======================================================================
+ * TIPOGRAFÍA Y ESTILOS GLOBALES
+ * ====================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 body {
     font-family: 'Inter', sans-serif;
     color: #4B5563;
     display: flex;
-}
-
-/* Estilos de la barra lateral (sidebar) */
-.sidebar {
-    width: 250px;
-    background-color: #1F2937;
-    color: #E5E7EB;
-    padding: 3rem 1.5rem;
-    display: flex;
-    flex-direction: column;
+    background-color: #F8F9FA;
+    margin: 0;
     min-height: 100vh;
 }
 
+/* ======================================================================
+ * BARRA LATERAL (SIDEBAR)
+ * ====================================================================== */
+.sidebar {
+    width: 280px;
+    background-color: #1A202C; /* Color de fondo más oscuro y elegante */
+    color: #E2E8F0;
+    padding: 3rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease;
+}
+
+.sidebar-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2D3748;
+}
+
 .sidebar h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.8rem;
+    font-weight: 800;
     color: #fff;
-    margin-bottom: 0.5rem;
+    margin: 0;
 }
 
 .sidebar h2 {
-    font-size: 0.75rem;
-    font-weight: 300;
-    color: #9CA3AF;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #A0AEC0;
 }
 
 .sidebar nav ul {
@@ -44,69 +58,82 @@ body {
 .sidebar nav ul li a {
     display: flex;
     align-items: center;
-    padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.2s ease, color 0.2s ease;
-    color: #D1D5DB;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    border-radius: 0.75rem; /* Esquinas más redondeadas */
+    transition: all 0.2s ease;
+    color: #CBD5E0;
     text-decoration: none;
+    font-weight: 600;
 }
 
 .sidebar nav ul li a:hover {
-    background-color: #374151;
-    color: #E5E7EB;
+    background-color: #2D3748;
+    color: #fff;
+    transform: translateX(5px); /* Pequeño efecto de movimiento */
 }
 
 .sidebar nav ul li .active-menu {
-    background-color: #374151;
+    background-color: #2D3748;
     color: #fff;
-    border-left: 4px solid #F9A826;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #F6AD55; /* Un toque de color para el activo */
 }
 
-/* Contenedor principal de la aplicación */
+.sidebar nav ul li a svg {
+    margin-right: 1rem;
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+}
+
+/* ======================================================================
+ * CONTENIDO PRINCIPAL
+ * ====================================================================== */
 #root {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
 }
 
-/* Estilos del encabezado */
 header {
     background-color: #fff;
     padding: 1rem 2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid #E2E8F0;
 }
 
 header h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #1F2937;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1A202C;
 }
 
-/* Contenido principal */
 .main-content {
     flex-grow: 1;
-    padding: 2rem;
-    background-color: #F3F4F6;
+    padding: 2.5rem;
+    background-color: #F8F9FA;
 }
 
-/* Contenedor del formulario/tabla */
+/* ======================================================================
+ * CONTENEDOR DE FORMULARIOS/TABLAS
+ * ====================================================================== */
 .form-container {
     background-color: #fff;
-    padding: 2rem;
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
     max-width: 900px;
     margin: 0 auto;
+    border: 1px solid #E2E8F0;
 }
 
-/* Estilos de los campos del formulario */
 .form-grid {
     display: grid;
-    gap: 1.5rem;
+    gap: 2rem;
     grid-template-columns: 1fr;
 }
 
@@ -125,94 +152,86 @@ header h1 {
     font-size: 0.875rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
+    color: #4A5568;
 }
 
 .form-field input,
 .form-field select {
-    padding: 0.75rem;
+    padding: 0.8rem 1rem;
     border-radius: 0.5rem;
-    border: 1px solid #D1D5DB;
-    background-color: #F9FAFB;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #E2E8F0;
+    background-color: #F7FAFC;
+    transition: all 0.3s ease;
 }
 
 .form-field input:focus,
 .form-field select:focus {
     outline: none;
-    border-color: #1F2937;
-    box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.1);
+    border-color: #4A5568;
+    box-shadow: 0 0 0 3px rgba(74, 85, 104, 0.1);
 }
 
-/* Estilos de los botones */
+/* ======================================================================
+ * BOTONES
+ * ====================================================================== */
 .btn {
-    padding: 0.75rem 1.5rem;
+    padding: 1rem 2rem;
     border-radius: 9999px;
-    font-weight: 600;
-    transition: background-color 0.2s ease;
+    font-weight: 700;
+    transition: background-color 0.2s ease, transform 0.2s ease;
     cursor: pointer;
     border: none;
     text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary {
-    background-color: #1F2937;
+    background-color: #2D3748;
     color: #fff;
 }
 
 .btn-primary:hover {
-    background-color: #374151;
+    background-color: #4A5568;
+    transform: translateY(-2px);
 }
 
-.btn-secondary {
-    background-color: #FABB5A;
-    color: #1F2937;
-}
-
-.btn-secondary:hover {
-    background-color: #F9A826;
-}
-
-/* Estilos de las tablas */
+/* ======================================================================
+ * TABLAS Y OTROS ELEMENTOS
+ * ====================================================================== */
 .employee-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
     margin-top: 2rem;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
 }
 
 .employee-table th,
 .employee-table td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #E5E7EB;
+    padding: 1rem;
     text-align: left;
 }
 
 .employee-table th {
-    background-color: #F9FAFB;
-    font-weight: 600;
-    color: #6B7280;
+    background-color: #F7FAFC;
+    font-weight: 700;
+    color: #718096;
     text-transform: uppercase;
     font-size: 0.75rem;
 }
 
-.xml-output {
-    display: none;
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background-color: #F9FAFB;
-    border-radius: 0.75rem;
-    border: 1px solid #E5E7EB;
+.employee-table td {
+    background-color: #fff;
+    border-bottom: 1px solid #E2E8F0;
 }
 
-.xml-output pre {
-    white-space: pre-wrap;
-    word-break: break-all;
-    font-size: 0.875rem;
-    color: #4B5563;
-    line-height: 1.4;
+.employee-table tbody tr {
+    transition: all 0.2s ease;
 }
 
-.xml-output pre .tag {
-    color: #1c529a;
-    font-weight: bold;
+.employee-table tbody tr:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
 }
