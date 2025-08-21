@@ -4,34 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Software de Nómina</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #F8F9FA; /* Gris muy claro para un look más limpio */
-            overflow-x: hidden; /* Evita el scroll horizontal */
-        }
-        .sidebar {
-            background-color: #132F63; /* Azul marino */
-        }
-        .main-content {
-            background-color: #F8F9FA; /* Gris muy claro */
-            flex-grow: 1;
-        }
-        .input-field {
-            transition: all 0.3s ease-in-out;
-            border: 1px solid #d1d5db;
-        }
-        .input-field:focus {
-            border-color: #132F63; /* Color azul corporativo en focus */
-            box-shadow: 0 0 0 2px rgba(19, 47, 99, 0.5);
-            outline: none;
-        }
-        .active-menu-item {
-            border-left: 4px solid #FABB5A; /* Borde lateral para el elemento activo */
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-    </style>
+    <!-- Enlaza el archivo CSS para los estilos -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="flex min-h-screen">
 
@@ -102,7 +76,7 @@
                     <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
                         <!-- Icono de Configuración -->
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mr-3">
-                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2v-.44a2 2 0 0 0 2-2h.44a2 2 0 0 1 2-2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1-2-2v-.44a2 2 0 0 0-2-2v-.44a2 2 0 0 1-2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2h.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2h.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2h.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2h.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1-2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2z"/>
+                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2v-.44a2 2 0 0 0 2-2h.44a2 2 0 0 1 2-2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1-2-2v-.44a2 2 0 0 0-2-2v-.44a2 2 0 0 1-2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2h.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2h.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2h.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1-2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2h.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2z"/>
                             <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
                         </svg>
                         Configuración
@@ -231,9 +205,51 @@
                         </div>
                     </div>
                     
-                    <!-- Campos de Liquidación -->
+                    <!-- Sección de Liquidación de Contrato -->
                     <div class="md:col-span-2">
-                        <h2 class="text-2xl font-bold text-[#132F63] mb-4">Resumen de Liquidación</h2>
+                        <h2 class="text-2xl font-bold text-[#132F63] mb-4 mt-6">Liquidación de Contrato</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="fechaFinContrato" class="block text-sm font-medium text-gray-700">Fecha de Terminación</label>
+                                <input type="date" id="fechaFinContrato" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" aria-label="Fecha de terminación del contrato">
+                            </div>
+                            <div>
+                                <label for="causaTerminacion" class="block text-sm font-medium text-gray-700">Causa de Terminación</label>
+                                <select id="causaTerminacion" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" aria-label="Causa de terminación del contrato">
+                                    <option value="">Selecciona...</option>
+                                    <option value="justa">Con Justa Causa</option>
+                                    <option value="sin_justa">Sin Justa Causa</option>
+                                    <option value="renuncia">Renuncia Voluntaria</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="liquidacionResultados" class="hidden mt-6 bg-yellow-100 p-4 rounded-lg">
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Resumen de Liquidación de Contrato</h3>
+                            <p class="text-sm text-gray-600">Días para liquidar: <span id="diasLiquidarDisplay">0</span></p>
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <span class="block text-sm font-medium text-gray-700">Vacaciones Liquidadas</span>
+                                    <span id="vacacionesLiquidadasDisplay" class="block text-lg font-bold text-gray-800">$0.00</span>
+                                </div>
+                                <div>
+                                    <span class="block text-sm font-medium text-gray-700">Cesantías Liquidadas</span>
+                                    <span id="cesantiasLiquidadasDisplay" class="block text-lg font-bold text-gray-800">$0.00</span>
+                                </div>
+                                <div>
+                                    <span class="block text-sm font-medium text-gray-700">Prima Liquidada</span>
+                                    <span id="primaLiquidadaDisplay" class="block text-lg font-bold text-gray-800">$0.00</span>
+                                </div>
+                                <div>
+                                    <span class="block text-sm font-medium text-gray-700">Indemnización</span>
+                                    <span id="indemnizacionDisplay" class="block text-lg font-bold text-gray-800">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Campos de Liquidación de Nómina -->
+                    <div class="md:col-span-2">
+                        <h2 class="text-2xl font-bold text-[#132F63] mb-4 mt-6">Resumen de Liquidación</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                             <div class="bg-blue-100 p-4 rounded-lg">
                                 <span class="block text-sm font-medium text-gray-700">Total Devengado</span>
@@ -302,259 +318,8 @@
             <span id="toast-message"></span>
         </div>
     </main>
-
-    <script>
-        // --- FUNCIÓN DE CÁLCULO DE NÓMINA ---
-        function calcularNomina() {
-            // Constantes (valores de referencia para el año 2025)
-            const SALARIO_MINIMO_2025 = 1423500;
-            const AUXILIO_TRANSPORTE_2025 = 200000;
-
-            // Obtener valores del formulario
-            const salarioBase = parseFloat(document.getElementById('salarioBase').value) || 0;
-            const diasTrabajados = parseInt(document.getElementById('diasTrabajados').value) || 0;
-            const horasExtras = parseFloat(document.getElementById('horasExtras').value) || 0;
-            const comisiones = parseFloat(document.getElementById('comisiones').value) || 0;
-            const bonificaciones = parseFloat(document.getElementById('bonificaciones').value) || 0;
-            const libranzas = parseFloat(document.getElementById('libranzas').value) || 0;
-            const retenciones = parseFloat(document.getElementById('retenciones').value) || 0;
-            
-            // Cálculos principales
-            let sueldoDevengado = (salarioBase / 30) * diasTrabajados;
-            let auxilioTransporte = (salarioBase < (SALARIO_MINIMO_2025 * 2)) ? AUXILIO_TRANSPORTE_2025 : 0;
-            
-            const deduccionSalud = sueldoDevengado * 0.04;
-            const deduccionPension = sueldoDevengado * 0.04;
-
-            // Cálculos de Provisiones
-            const cesantias = (sueldoDevengado + auxilioTransporte) * 0.0833;
-            const interesesCesantias = cesantias * 0.01;
-            const primaServicios = (sueldoDevengado + auxilioTransporte) * 0.0833;
-            const vacaciones = sueldoDevengado * 0.0417;
-
-            // Totales
-            const totalDevengado = sueldoDevengado + auxilioTransporte + horasExtras + comisiones + bonificaciones;
-            const totalDeducciones = deduccionSalud + deduccionPension + libranzas + retenciones;
-            const netoPagar = totalDevengado - totalDeducciones;
-
-            return {
-                sueldo: sueldoDevengado,
-                auxilio_transporte: auxilioTransporte,
-                horas_extras: horasExtras,
-                comisiones: comisiones,
-                bonificaciones: bonificaciones,
-                salud: deduccionSalud,
-                pension: deduccionPension,
-                libranzas: libranzas,
-                retenciones: retenciones,
-                cesantias: cesantias,
-                interesesCesantias: interesesCesantias,
-                primaServicios: primaServicios,
-                vacaciones: vacaciones,
-                totalDevengado: totalDevengado,
-                totalDeducciones: totalDeducciones,
-                netoPagar: netoPagar
-            };
-        }
-        
-        // --- FUNCIÓN PARA ACTUALIZAR LOS CAMPOS DE RESUMEN ---
-        function actualizarResumen() {
-            const resultados = calcularNomina();
-            document.getElementById('totalDevengadoDisplay').textContent = resultados.totalDevengado.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-            document.getElementById('totalDeduccionesDisplay').textContent = resultados.totalDeducciones.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-            document.getElementById('netoPagarDisplay').textContent = resultados.netoPagar.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-            document.getElementById('cesantiasDisplay').textContent = resultados.cesantias.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-            document.getElementById('interesesCesantiasDisplay').textContent = resultados.interesesCesantias.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-            document.getElementById('primaServiciosDisplay').textContent = resultados.primaServicios.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-            document.getElementById('vacacionesDisplay').textContent = resultados.vacaciones.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-        }
-
-        // --- FUNCIÓN DE GENERACIÓN DE XML ---
-        function generarXML(datos) {
-            const parser = new DOMParser();
-            // Esto es una simplificación de la estructura UBL 2.1 de la DIAN
-            const xmlDoc = parser.parseFromString("<NominaElectronica/>", "text/xml");
-            const root = xmlDoc.documentElement;
-            
-            // Atributos de ejemplo para DIAN
-            root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            root.setAttribute("xmlns", "http://facturaelectronica.dian.gov.co/dian/apn");
-            root.setAttribute("version", "1.0");
-            root.setAttribute("periodoInicio", datos.fechaInicioContrato); // Usando fecha de inicio de contrato como proxy
-            root.setAttribute("periodoFin", new Date().toISOString().slice(0, 10)); // Usando fecha actual como proxy
-            root.setAttribute("numeroNomina", "1");
-            
-            // Datos del Empleador
-            const empleador = xmlDoc.createElement("Empleador");
-            empleador.setAttribute("nit", datos.nit);
-            empleador.setAttribute("razonSocial", datos.razonSocial);
-            root.appendChild(empleador);
-            
-            // Datos del Empleado
-            const empleadoElem = xmlDoc.createElement("Empleado");
-            empleadoElem.setAttribute("tipoDocumento", datos.tipoDocumento);
-            empleadoElem.setAttribute("identificacion", datos.identificacion);
-            empleadoElem.setAttribute("primerNombre", datos.nombreEmpleado);
-            empleadoElem.setAttribute("cargo", datos.cargo);
-            empleadoElem.setAttribute("tipoContrato", datos.tipoContrato);
-            empleadoElem.setAttribute("fechaInicioContrato", datos.fechaInicioContrato);
-            empleadoElem.setAttribute("centroCosto", datos.centroCosto);
-            root.appendChild(empleadoElem);
-            
-            // Conceptos de Devengados
-            const devengados = xmlDoc.createElement("Devengados");
-            devengados.appendChild(xmlDoc.createElement("Sueldo")).setAttribute("valor", Math.round(datos.sueldo).toString());
-            devengados.appendChild(xmlDoc.createElement("AuxilioTransporte")).setAttribute("valor", Math.round(datos.auxilio_transporte).toString());
-            devengados.appendChild(xmlDoc.createElement("HorasExtras")).setAttribute("valor", Math.round(datos.horas_extras).toString());
-            devengados.appendChild(xmlDoc.createElement("Comisiones")).setAttribute("valor", Math.round(datos.comisiones).toString());
-            devengados.appendChild(xmlDoc.createElement("Bonificaciones")).setAttribute("valor", Math.round(datos.bonificaciones).toString());
-            root.appendChild(devengados);
-            
-            // Conceptos de Deducciones
-            const deducciones = xmlDoc.createElement("Deducciones");
-            deducciones.appendChild(xmlDoc.createElement("Salud")).setAttribute("valor", Math.round(datos.salud).toString());
-            deducciones.appendChild(xmlDoc.createElement("Pension")).setAttribute("valor", Math.round(datos.pension).toString());
-            deducciones.appendChild(xmlDoc.createElement("Libranzas")).setAttribute("valor", Math.round(datos.libranzas).toString());
-            deducciones.appendChild(xmlDoc.createElement("Retenciones")).setAttribute("valor", Math.round(datos.retenciones).toString());
-            root.appendChild(deducciones);
-
-            // Provisiones y Prestaciones
-            const provisiones = xmlDoc.createElement("Provisiones");
-            provisiones.appendChild(xmlDoc.createElement("Cesantias")).setAttribute("valor", Math.round(datos.cesantias).toString());
-            provisiones.appendChild(xmlDoc.createElement("InteresesCesantias")).setAttribute("valor", Math.round(datos.interesesCesantias).toString());
-            provisiones.appendChild(xmlDoc.createElement("PrimaServicios")).setAttribute("valor", Math.round(datos.primaServicios).toString());
-            provisiones.appendChild(xmlDoc.createElement("Vacaciones")).setAttribute("valor", Math.round(datos.vacaciones).toString());
-            root.appendChild(provisiones);
-            
-            const serializer = new XMLSerializer();
-            return serializer.serializeToString(xmlDoc);
-        }
-
-        // --- MANEJO DEL FORMULARIO Y VALIDACIONES ---
-        document.getElementById('nominaForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const submitButton = document.getElementById('submitButton');
-            submitButton.innerHTML = `
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-[#132F63]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Cargando...
-            `;
-            submitButton.disabled = true;
-
-            setTimeout(() => {
-                const formInputs = {
-                    nit: document.getElementById('nit').value,
-                    razonSocial: document.getElementById('razonSocial').value,
-                    nombreEmpleado: document.getElementById('nombreEmpleado').value,
-                    tipoDocumento: document.getElementById('tipoDocumento').value,
-                    identificacion: document.getElementById('identificacion').value,
-                    cargo: document.getElementById('cargo').value,
-                    tipoContrato: document.getElementById('tipoContrato').value,
-                    fechaInicioContrato: document.getElementById('fechaInicioContrato').value,
-                    centroCosto: document.getElementById('centroCosto').value,
-                    salarioBase: parseFloat(document.getElementById('salarioBase').value),
-                    diasTrabajados: parseInt(document.getElementById('diasTrabajados').value)
-                };
-
-                // Simple validation check
-                for (const key in formInputs) {
-                    if (!formInputs[key] && key !== 'fechaInicioContrato') {
-                         showToast(`Por favor, completa el campo '${key}'.`, "red");
-                         submitButton.innerHTML = "Generar Nómina";
-                         submitButton.disabled = false;
-                         return;
-                    }
-                }
-                 if (isNaN(formInputs.salarioBase) || isNaN(formInputs.diasTrabajados) || formInputs.salarioBase <= 0 || formInputs.diasTrabajados <= 0) {
-                     showToast("Por favor, ingresa valores numéricos válidos (mayores a 0) para salario y días trabajados.", "red");
-                     submitButton.innerHTML = "Generar Nómina";
-                     submitButton.disabled = false;
-                     return;
-                 }
-
-
-                const resultados = calcularNomina();
-                
-                // Actualizar la vista de resultados
-                document.getElementById('totalDevengadoDisplay').textContent = resultados.totalDevengado.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-                document.getElementById('totalDeduccionesDisplay').textContent = resultados.totalDeducciones.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-                document.getElementById('netoPagarDisplay').textContent = resultados.netoPagar.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-                document.getElementById('cesantiasDisplay').textContent = resultados.cesantias.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-                document.getElementById('interesesCesantiasDisplay').textContent = resultados.interesesCesantias.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-                document.getElementById('primaServiciosDisplay').textContent = resultados.primaServicios.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-                document.getElementById('vacacionesDisplay').textContent = resultados.vacaciones.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
-
-                const xmlString = generarXML({ ...formInputs, ...resultados });
-                document.getElementById('xmlOutput').textContent = xmlString;
-
-                document.getElementById('resultsContainer').classList.remove('hidden');
-                submitButton.innerHTML = "Generar Nómina";
-                submitButton.disabled = false;
-                showToast("¡Nómina generada con éxito!", "green");
-            }, 1000); // Simulación de carga
-        });
-
-        // Add event listeners for key inputs to update the summary in real-time
-        ['salarioBase', 'diasTrabajados', 'horasExtras', 'comisiones', 'bonificaciones', 'libranzas', 'retenciones'].forEach(id => {
-            const input = document.getElementById(id);
-            if (input) {
-                input.addEventListener('input', actualizarResumen);
-            }
-        });
-
-        // --- MANEJO DE BOTONES ---
-        document.getElementById('copyButton').addEventListener('click', function() {
-            const xmlContent = document.getElementById('xmlOutput').textContent;
-            try {
-                const tempTextArea = document.createElement('textarea');
-                tempTextArea.value = xmlContent;
-                document.body.appendChild(tempTextArea);
-                tempTextArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempTextArea);
-                showToast("XML copiado al portapapeles!", "green");
-            } catch (err) {
-                showToast("Error al intentar copiar el XML.", "red");
-            }
-        });
-
-        document.getElementById('downloadButton').addEventListener('click', function() {
-            const xmlContent = document.getElementById('xmlOutput').textContent;
-            const filename = `nomina_${document.getElementById('identificacion').value}.xml`;
-            const blob = new Blob([xmlContent], { type: 'application/xml' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showToast("XML descargado con éxito!", "green");
-        });
-
-        // --- MANEJO DE NOTIFICACIONES TOAST ---
-        function showToast(message, type = "red") {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toast-message');
-            toastMessage.textContent = message;
-            
-            toast.className = `fixed bottom-6 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-md shadow-lg text-white text-center transition-all duration-300 ease-in-out z-50`;
-            toast.classList.remove('hidden');
-
-            if (type === "green") {
-                toast.style.backgroundColor = '#27AE60';
-            } else {
-                toast.style.backgroundColor = '#F6554D';
-            }
-
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 5000);
-        }
-    </script>
+    
+    <!-- Enlaza el archivo JavaScript para la lógica -->
+    <script src="script.js"></script>
 </body>
 </html>
