@@ -1,282 +1,327 @@
-// Ahora que las librerías se cargan en el HTML, podemos acceder a ellas directamente
-const { useState, useEffect } = React;
-const { createRoot } = ReactDOM;
+// Comentarios en español para facilitar la comprensión.
 
-// Componente principal de la aplicación
-const App = () => {
-    // Definir estados para la aplicación
+// Importaciones de React
+const { useState, useEffect } = React;
+
+/**
+ * Componente principal de la aplicación.
+ * @returns {JSX.Element} El JSX del componente App.
+ */
+function App() {
+    // Definimos el estado de la aplicación
+    const [employees, setEmployees] = useState([]);
+    const [formData, setFormData] = useState({
+        employeeName: '',
+        documentType: 'Cédula de Ciudadanía (CC)',
+        documentNumber: '',
+        monthlySalary: '',
+    });
+    const [message, setMessage] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [db, setDb] = useState(null);
     const [auth, setAuth] = useState(null);
     const [userId, setUserId] = useState(null);
-    const [employees, setEmployees] = useState([]);
-    const [view, setView] = useState('nomina');
-    const [message, setMessage] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
 
-    // useEffect para inicializar Firebase y manejar la autenticación
+    // ======================================================================
+    // CONFIGURACIÓN DE FIREBASE
+    // ======================================================================
     useEffect(() => {
-        const initFirebase = async () => {
+        const initializeFirebase = async () => {
             try {
-                // Leer las variables globales para la configuración y el token de autenticación
+                // Obtener las variables globales de Firebase
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                 const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+
+                if (Object.keys(firebaseConfig).length === 0) {
+                    console.error("Firebase config is not available. Check environment variables.");
+                    setLoading(false);
+                    return;
+                }
+
+                // Importar los módulos de Firebase
+                const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js");
+                const { getAuth, signInWithCustomToken, signInAnonymously } = await import("https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js");
+                const { getFirestore, collection, onSnapshot, addDoc, query } = await import("https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js");
+                
+                // Inicializar Firebase
+                const app = initializeApp(firebaseConfig);
+                const firestoreDb = getFirestore(app);
+                const firebaseAuth = getAuth(app);
+                
+                // Autenticar con el token o de forma anónima
                 const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                if (initialAuthToken) {
+                    await signInWithCustomToken(firebaseAuth, initialAuthToken);
+                } else {
+                    await signInAnonymously(firebaseAuth);
+                }
 
-                // Inicializar la app de Firebase
-                const app = firebase.initializeApp(firebaseConfig);
-                const firestore = firebase.firestore(app);
-                const firebaseAuth = firebase.auth(app);
-
-                setDb(firestore);
+                // Asignar los servicios al estado
+                setDb(firestoreDb);
                 setAuth(firebaseAuth);
-
-                // Manejar la autenticación del usuario
-                firebaseAuth.onAuthStateChanged(async (user) => {
-                    if (user) {
-                        setUserId(user.uid);
-                    } else {
-                        // Si no hay usuario autenticado, inicia sesión con el token personalizado o anónimamente
-                        if (initialAuthToken) {
-                            await firebaseAuth.signInWithCustomToken(initialAuthToken);
-                        } else {
-                            await firebaseAuth.signInAnonymously();
-                        }
-                    }
-                });
+                setUserId(firebaseAuth.currentUser.uid);
+                setLoading(false);
+                
+                console.log("Firebase inicializado y autenticación exitosa.");
             } catch (error) {
-                console.error("Error al inicializar Firebase:", error);
-                setMessage("Error al conectar con la base de datos. Intente recargar la página.");
-            } finally {
-                // Esta línea garantiza que el estado de carga siempre termine
+                console.error("Error al inicializar Firebase o autenticar:", error);
+                setMessage({ text: "Error de configuración. La aplicación no funcionará correctamente.", type: "error" });
                 setLoading(false);
             }
         };
-        initFirebase();
+
+        initializeFirebase();
     }, []);
 
-    // useEffect para escuchar los cambios en la colección de empleados
+    // ======================================================================
+    // CARGA DE DATOS DESDE FIRESTORE
+    // ======================================================================
     useEffect(() => {
-        // Solo ejecutar si Firebase y el usuario están listos
+        // Solo suscribirse si Firebase y el usuario están listos
         if (db && userId) {
-            const employeesCollectionRef = db.collection(`artifacts/${__app_id}/users/${userId}/employees`);
+            const employeeCollection = collection(db, `artifacts/${__app_id}/users/${userId}/employees`);
+            const employeeQuery = query(employeeCollection);
 
-            // Escuchar los cambios en tiempo real
-            const unsubscribe = employeesCollectionRef.onSnapshot((snapshot) => {
-                const employeesList = snapshot.docs.map(doc => ({
+            const unsubscribe = onSnapshot(employeeQuery, (snapshot) => {
+                const employeeList = snapshot.docs.map(doc => ({
                     id: doc.id,
-                    ...doc.data(),
+                    ...doc.data()
                 }));
-                setEmployees(employeesList);
+                setEmployees(employeeList);
+                console.log("Empleados cargados en tiempo real:", employeeList.length);
             }, (error) => {
-                console.error("Error al obtener los empleados:", error);
-                setMessage("Error al cargar la lista de empleados.");
+                console.error("Error al escuchar cambios en la colección:", error);
+                setMessage({ text: "Error al cargar la lista de empleados.", type: "error" });
             });
 
-            // Limpiar el listener cuando el componente se desmonta o los datos cambian
+            // Limpiar el listener cuando el componente se desmonte
             return () => unsubscribe();
         }
     }, [db, userId]);
 
-    // Función para manejar el envío del formulario de empleados
-    const handleAddEmployee = async (event) => {
-        event.preventDefault();
-        setMessage('');
+    // ======================================================================
+    // MANEJO DEL FORMULARIO
+    // ======================================================================
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevData => ({ ...prevData, [name]: value }));
+    };
 
-        // Obtener datos del formulario
-        const formData = new FormData(event.target);
-        const employeeData = Object.fromEntries(formData.entries());
+    /**
+     * Guarda un nuevo empleado en la base de datos.
+     * @param {Event} e El evento del formulario.
+     */
+    const saveEmployee = async (e) => {
+        e.preventDefault();
+        setIsSaving(true);
+        setMessage(null);
 
-        // Validar que todos los campos requeridos estén llenos
-        const requiredFields = ['nombreEmpleado', 'tipoDocumento', 'identificacion', 'salarioBase', 'cargo', 'fechaIngreso'];
-        const isFormValid = requiredFields.every(field => employeeData[field]);
-        if (!isFormValid) {
-            setMessage("Por favor, complete todos los campos requeridos.");
+        // Validar que los campos no estén vacíos
+        if (!formData.employeeName || !formData.documentNumber || !formData.monthlySalary) {
+            setMessage({ text: "Todos los campos son obligatorios.", type: "error" });
+            setIsSaving(false);
             return;
         }
-        
-        // Convertir campos numéricos
-        employeeData.salarioBase = parseFloat(employeeData.salarioBase);
 
         try {
-            // Guardar el nuevo empleado en Firestore. Usamos el 'identificacion' como ID del documento
-            const employeeDocRef = db.collection(`artifacts/${__app_id}/users/${userId}/employees`).doc(employeeData.identificacion);
-            await employeeDocRef.set(employeeData);
-            setMessage("¡Empleado guardado con éxito!");
-            event.target.reset(); // Limpiar el formulario
-        } catch (e) {
-            console.error("Error al agregar el empleado:", e);
-            setMessage("Error al guardar el empleado. Intente de nuevo.");
+            // Referencia a la colección de empleados del usuario
+            const employeeCollectionRef = collection(db, `artifacts/${__app_id}/users/${userId}/employees`);
+            await addDoc(employeeCollectionRef, {
+                ...formData,
+                monthlySalary: parseFloat(formData.monthlySalary), // Convertir a número
+                createdAt: new Date().toISOString()
+            });
+
+            setMessage({ text: "Empleado guardado exitosamente.", type: "success" });
+            
+            // Limpiar el formulario después de guardar
+            setFormData({
+                employeeName: '',
+                documentType: 'Cédula de Ciudadanía (CC)',
+                documentNumber: '',
+                monthlySalary: ''
+            });
+            
+        } catch (error) {
+            console.error("Error al guardar el empleado:", error);
+            setMessage({ text: "Error al guardar el empleado. Por favor, inténtalo de nuevo.", type: "error" });
+        } finally {
+            setIsSaving(false);
         }
     };
 
-    // Componente de menú lateral
-    const Sidebar = () => (
-        <aside className="sidebar">
-            <div className="mb-8">
-                <h1 className="text-3xl font-extrabold text-white">Nomina</h1>
-                <h2 className="text-xs font-light text-gray-300">Software para la DIAN</h2>
-            </div>
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#" onClick={() => setView('nomina')} className={view === 'nomina' ? 'active-menu' : ''}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                                <polyline points="14 2 14 8 20 8"/>
-                                <line x1="16" x2="8" y1="13" y2="13"/>
-                                <line x1="16" x2="8" y1="17" y2="17"/>
-                                <line x1="10" x2="8" y1="9" y2="9"/>
-                            </svg>
-                            Gestión de Empleados
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" onClick={() => setView('employees')} className={view === 'employees' ? 'active-menu' : ''}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                            </svg>
-                            Ver Empleados
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            {userId && (
-                <div className="mt-auto text-sm text-gray-400">
-                    <p>ID de usuario:</p>
-                    <p className="break-all font-mono">{userId}</p>
-                </div>
-            )}
-        </aside>
-    );
-
-    // Componente de encabezado
-    const Header = ({ title }) => (
-        <header>
-            <h1>{title}</h1>
-            <div className="flex items-center space-x-4">
-                <div className="h-10 w-10 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold">
-                    UN
-                </div>
-            </div>
-        </header>
-    );
-
-    // Componente del formulario para agregar empleados
-    const EmployeeForm = () => (
-        <div className="form-container">
-            <p className="text-sm text-gray-600 mb-8 text-center sm:text-base">
-                Ingresa los datos del empleado para agregarlo a la base de datos.
-            </p>
-            <hr className="border-gray-200 mb-8" />
-            
-            <form onSubmit={handleAddEmployee} className="form-grid">
-                <div className="full-span">
-                    <h2 className="text-2xl font-bold mb-4 text-blue-800">Datos del Empleado</h2>
-                    <div className="space-y-6">
-                        <div>
-                            <label htmlFor="nombreEmpleado" className="block text-sm font-medium text-gray-700">Nombre del Empleado</label>
-                            <input type="text" name="nombreEmpleado" required />
-                        </div>
-                        <div>
-                            <label htmlFor="tipoDocumento" className="block text-sm font-medium text-gray-700">Tipo de Documento</label>
-                            <select name="tipoDocumento" required>
-                                <option value="CC">Cédula de Ciudadanía (CC)</option>
-                                <option value="CE">Cédula de Extranjería (CE)</option>
-                                <option value="PA">Pasaporte (PA)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label htmlFor="identificacion" className="block text-sm font-medium text-gray-700">Número de Documento</label>
-                            <input type="text" name="identificacion" required />
-                        </div>
-                        <div>
-                            <label htmlFor="salarioBase" className="block text-sm font-medium text-gray-700">Salario Básico Mensual</label>
-                            <input type="number" name="salarioBase" required />
-                        </div>
-                        <div>
-                            <label htmlFor="cargo" className="block text-sm font-medium text-gray-700">Cargo</label>
-                            <input type="text" name="cargo" required />
-                        </div>
-                        <div>
-                            <label htmlFor="fechaIngreso" className="block text-sm font-medium text-gray-700">Fecha de Ingreso</label>
-                            <input type="date" name="fechaIngreso" required />
-                        </div>
-                    </div>
-                </div>
-                
-                <div className="full-span mt-8 flex justify-center">
-                    <button type="submit">
-                        Guardar Empleado
-                    </button>
-                </div>
-                {message && <p className="full-span text-center text-sm mt-4 text-blue-800">{message}</p>}
-            </form>
-        </div>
-    );
-
-    // Componente de la lista de empleados
-    const EmployeeList = () => (
-        <div className="form-container">
-            <p className="text-sm text-gray-600 mb-8 text-center sm:text-base">
-                Aquí puedes ver todos los empleados guardados. El procesamiento se hará con un script de Python.
-            </p>
-            <hr className="border-gray-200 mb-8" />
-
-            {employees.length > 0 ? (
-                <>
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Identificación</th>
-                                <th scope="col">Salario</th>
-                                <th scope="col">Cargo</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {employees.map(emp => (
-                                <tr key={emp.id}>
-                                    <td>{emp.nombreEmpleado}</td>
-                                    <td>{emp.identificacion}</td>
-                                    <td>${emp.salarioBase}</td>
-                                    <td>{emp.cargo}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    <div className="mt-8 text-center text-gray-500">
-                        <p>Para generar la nómina, ejecuta el script de Python con los datos de esta base de datos.</p>
-                    </div>
-                </>
-            ) : (
-                <p className="text-center text-gray-500">No hay empleados guardados. Agregue uno primero.</p>
-            )}
-        </div>
-    );
-
-    // Renderizar la interfaz según el estado
+    // ======================================================================
+    // RENDERIZADO DEL COMPONENTE
+    // ======================================================================
     if (loading) {
-        return <div className="p-8 text-center text-gray-500 text-xl font-semibold">Cargando...</div>;
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-100">
+                <p className="text-xl text-gray-700">Cargando...</p>
+            </div>
+        );
+    }
+    
+    // Si la autenticación falla, mostramos un mensaje de error
+    if (!userId) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-100">
+                <p className="text-xl text-red-500 font-bold text-center">
+                    Error de autenticación. No se puede cargar la aplicación.
+                </p>
+            </div>
+        );
     }
 
     return (
-        <div className="flex w-full">
-            <Sidebar />
-            <main className="flex-1 flex flex-col">
-                <Header title={view === 'nomina' ? 'Gestión de Empleados' : 'Nómina Electrónica'} />
-                <div className="main-content">
-                    {view === 'nomina' ? <EmployeeForm /> : <EmployeeList />}
+        <div className="flex min-h-screen bg-gray-100">
+            {/* Barra Lateral (Sidebar) */}
+            <aside className="w-64 bg-gray-900 text-gray-200 p-6 flex flex-col shadow-xl">
+                <div className="mb-8 pb-4 border-b border-gray-700">
+                    <h1 className="text-3xl font-extrabold text-white">Nómina</h1>
+                    <h2 className="text-sm font-light text-gray-400">Software para la DIAN</h2>
                 </div>
+                <nav className="flex-1">
+                    <ul>
+                        <li>
+                            <a href="#" className="flex items-center p-3 mb-2 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <span className="font-semibold">Generar Nómina</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" className="flex items-center p-3 mb-2 rounded-lg bg-gray-800 text-white transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" />
+                                </svg>
+                                <span className="font-semibold">Empleados</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div className="mt-auto pt-4 border-t border-gray-700 text-xs text-gray-500">
+                    <p>ID de Usuario:</p>
+                    <p className="font-mono break-all text-sm">{userId}</p>
+                </div>
+            </aside>
+            
+            {/* Contenido Principal */}
+            <main className="flex-1 p-8 bg-white overflow-y-auto">
+                <header className="mb-8">
+                    <h1 className="text-4xl font-extrabold text-gray-900">Gestión de Empleados</h1>
+                </header>
+                
+                {/* Mensajes de éxito/error */}
+                {message && (
+                    <div className={`p-4 mb-4 text-sm rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {message.text}
+                    </div>
+                )}
+
+                {/* Formulario de Empleado */}
+                <section className="bg-gray-50 p-6 rounded-xl shadow-lg mb-8">
+                    <h2 className="text-xl font-bold text-gray-800 mb-6">Ingresa los datos del empleado para agregarlo a la base de datos.</h2>
+                    <form onSubmit={saveEmployee} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label htmlFor="employeeName" className="block text-sm font-medium text-gray-700">Nombre del Empleado</label>
+                                <input
+                                    type="text"
+                                    id="employeeName"
+                                    name="employeeName"
+                                    value={formData.employeeName}
+                                    onChange={handleInputChange}
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="documentType" className="block text-sm font-medium text-gray-700">Tipo de Documento</label>
+                                <select
+                                    id="documentType"
+                                    name="documentType"
+                                    value={formData.documentType}
+                                    onChange={handleInputChange}
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                >
+                                    <option>Cédula de Ciudadanía (CC)</option>
+                                    <option>Tarjeta de Identidad (TI)</option>
+                                    <option>Cédula de Extranjería (CE)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="documentNumber" className="block text-sm font-medium text-gray-700">Número de Documento</label>
+                                <input
+                                    type="text"
+                                    id="documentNumber"
+                                    name="documentNumber"
+                                    value={formData.documentNumber}
+                                    onChange={handleInputChange}
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="monthlySalary" className="block text-sm font-medium text-gray-700">Salario Básico Mensual</label>
+                                <input
+                                    type="number"
+                                    id="monthlySalary"
+                                    name="monthlySalary"
+                                    value={formData.monthlySalary}
+                                    onChange={handleInputChange}
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-end">
+                            <button
+                                type="submit"
+                                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                                disabled={isSaving}
+                            >
+                                {isSaving ? "Guardando..." : "Guardar Empleado"}
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                {/* Tabla de Empleados */}
+                <section className="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Lista de Empleados</h2>
+                    <div className="overflow-x-auto">
+                        {employees.length > 0 ? (
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo Documento</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Número de Documento</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salario</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {employees.map((emp) => (
+                                        <tr key={emp.id}>
+                                            <td className="px-6 py-4 whitespace-nowrap">{emp.employeeName}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{emp.documentType}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{emp.documentNumber}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">${emp.monthlySalary.toLocaleString()}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p className="text-center text-gray-500">No hay empleados registrados. ¡Agrega uno nuevo!</p>
+                        )}
+                    </div>
+                </section>
+
             </main>
         </div>
     );
-};
+}
 
-// Renderizar la aplicación en el DOM
-const container = document.getElementById('root');
-const root = createRoot(container);
+// Renderizar el componente en el DOM
+const domNode = document.getElementById('root');
+const root = ReactDOM.createRoot(domNode);
 root.render(<App />);
-
