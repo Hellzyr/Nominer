@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithCustomToken, signInAnonymously } from 'firebase/auth';
-import { getFirestore, collection, onSnapshot, addDoc, query } from 'firebase/firestore';
+import { getFirestore, collection, onSnapshot, addDoc } from 'firebase/firestore';
 import { useReactToPrint } from 'react-to-print';
 
 // ----------------------------------------------------------------------
@@ -343,7 +343,6 @@ function Invoicing({ db, userId, appId }) {
     );
 }
 
-
 /**
  * Componente de reportes.
  * @param {object} props - Propiedades del componente.
@@ -435,7 +434,6 @@ function App() {
     const [currentPage, setCurrentPage] = useState('dashboard');
     const [loading, setLoading] = useState(true);
     const [db, setDb] = useState(null);
-    const [auth, setAuth] = useState(null);
     const [userId, setUserId] = useState(null);
     const [message, setMessage] = useState(null);
     
@@ -449,11 +447,13 @@ function App() {
     useEffect(() => {
         const initializeFirebase = async () => {
             try {
+                // Variables globales proporcionadas por el entorno
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                 const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
                 const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
                 
-                if (Object.keys(firebaseConfig).length === 0) {
+                // Verificar si la configuración de Firebase es válida
+                if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
                     console.error("Firebase config is not available.");
                     setLoading(false);
                     return;
@@ -464,7 +464,7 @@ function App() {
                 const firestoreDb = getFirestore(app);
                 const firebaseAuth = getAuth(app);
                 
-                // Autenticar con el token o de forma anónima
+                // Autenticar con el token o de forma anónima si no hay token
                 if (initialAuthToken) {
                     await signInWithCustomToken(firebaseAuth, initialAuthToken);
                 } else {
@@ -472,8 +472,7 @@ function App() {
                 }
                 
                 setDb(firestoreDb);
-                setAuth(firebaseAuth);
-                setUserId(firebaseAuth.currentUser.uid);
+                setUserId(firebaseAuth.currentUser?.uid || crypto.randomUUID());
                 setLoading(false);
             } catch (error) {
                 console.error("Error al inicializar Firebase:", error);
