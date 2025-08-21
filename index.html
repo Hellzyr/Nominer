@@ -1,327 +1,286 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Software de Nómina</title>
-    <!-- Enlaza el archivo CSS para los estilos -->
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Software de Nómina</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Tailwind para que funcionen las clases utilitarias -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar w-64 p-6 flex flex-col items-start space-y-4 shadow-xl">
+    <div class="mb-8">
+      <h1 class="text-3xl font-extrabold text-white">Nómina</h1>
+      <h2 class="text-xs font-light text-gray-300">Software para la DIAN</h2>
+    </div>
+    <nav class="w-full">
+      <ul class="space-y-2">
+        <li>
+          <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">Dashboard</a>
+        </li>
+        <li>
+          <a href="#" class="flex items-center p-3 text-lg font-bold text-white rounded-md transition-colors active-menu-item">Nómina</a>
+          <ul class="pl-8 mt-2 space-y-1">
+            <li><a href="#" class="block text-sm text-white hover:text-[#FABB5A] transition-colors">Generar Nómina</a></li>
+            <li><a href="#" class="block text-sm text-gray-300 hover:text-[#FABB5A] transition-colors">Historial de Nóminas</a></li>
+            <li><a href="#" class="block text-sm text-gray-300 hover:text-[#FABB5A] transition-colors">Liquidación de Contrato</a></li>
+          </ul>
+        </li>
+        <li><a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">Empleados</a></li>
+        <li><a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">Reportes</a></li>
+        <li><a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">Configuración</a></li>
+      </ul>
+    </nav>
+  </aside>
 
-    <!-- Sidebar -->
-    <aside id="sidebar" class="sidebar w-64 p-6 flex flex-col items-start space-y-4 shadow-xl">
-        <div class="mb-8">
-            <h1 class="text-3xl font-extrabold text-white">Nomina</h1>
-            <h2 class="text-xs font-light text-gray-300">Software para la DIAN</h2>
-        </div>
-        <nav class="w-full">
-            <ul class="space-y-2">
-                <li>
-                    <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
-                        <!-- Icono de Dashboard -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mr-3">
-                            <rect x="3" y="3" width="7" height="9"/>
-                            <rect x="14" y="3" width="7" height="5"/>
-                            <rect x="14" y="12" width="7" height="5"/>
-                            <rect x="3" y="16" width="7" height="5"/>
-                        </svg>
-                        Dashboard
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center p-3 text-lg font-bold text-white rounded-md transition-colors active-menu-item">
-                        <!-- Icono de Nómina -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mr-3">
-                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="16" x2="8" y1="13" y2="13"/>
-                            <line x1="16" x2="8" y1="17" y2="17"/>
-                            <line x1="10" x2="8" y1="9" y2="9"/>
-                        </svg>
-                        Nómina
-                    </a>
-                    <ul class="pl-8 mt-2 space-y-1">
-                        <li><a href="#" class="block text-sm text-white hover:text-[#FABB5A] transition-colors">Generar Nómina</a></li>
-                        <li><a href="#" class="block text-sm text-gray-300 hover:text-[#FABB5A] transition-colors">Historial de Nóminas</a></li>
-                        <li><a href="#" class="block text-sm text-gray-300 hover:text-[#FABB5A] transition-colors">Liquidación de Contrato</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
-                        <!-- Icono de Empleados -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mr-3">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                        </svg>
-                        Empleados
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
-                        <!-- Icono de Reportes -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mr-3">
-                            <path d="M21.54 15H17a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4.54a1 1 0 0 1 .84 1.5l-2.43 4.54a1.72 1.72 0 0 1 0 1.92l2.43 4.54a1 1 0 0 1-.84 1.5z"/>
-                            <path d="M3.5 15H8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H3.5A1.5 1.5 0 0 0 2 6.5v8A1.5 1.5 0 0 0 3.5 15z"/>
-                            <path d="M12 19V5"/>
-                            <path d="M10 17l2-2"/>
-                            <path d="M14 17l-2-2"/>
-                        </svg>
-                        Reportes
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
-                        <!-- Icono de Configuración -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mr-3">
-                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2v-.44a2 2 0 0 0 2-2h.44a2 2 0 0 1 2-2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1-2-2v-.44a2 2 0 0 0-2-2v-.44a2 2 0 0 1-2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2h.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2h.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2h.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1-2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2h.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2z"/>
-                            <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                        </svg>
-                        Configuración
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
+  <!-- Contenido principal -->
+  <main class="flex-1 flex flex-col">
+    <header class="bg-white p-4 sm:p-6 flex justify-between items-center shadow-md">
+      <h1 class="text-4xl font-extrabold text-[#132F63]">Generar Nómina</h1>
+      <div class="flex items-center space-x-4">
+        <button aria-label="Notificaciones" class="text-gray-500 hover:text-[#FABB5A] transition-colors">🔔</button>
+        <div aria-label="Perfil de usuario" class="h-10 w-10 rounded-full bg-[#FABB5A] flex items-center justify-center text-white font-bold">UN</div>
+      </div>
+    </header>
 
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col">
-        <!-- Header -->
-        <header class="bg-white p-4 sm:p-6 flex justify-between items-center shadow-md">
-            <h1 class="text-4xl font-extrabold text-[#132F63]">Generar Nómina</h1>
-            <div class="flex items-center space-x-4">
-                <button aria-label="Notificaciones" class="text-gray-500 hover:text-[#FABB5A] transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.42 6.421 6 8.527 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                    </svg>
-                </button>
-                <div aria-label="Perfil de usuario" class="h-10 w-10 rounded-full bg-[#FABB5A] flex items-center justify-center text-white font-bold">
-                    UN
-                </div>
+    <div class="main-content flex justify-center items-start pt-10 pb-10">
+      <div class="w-full max-w-5xl bg-white p-8 sm:p-10 rounded-xl shadow-lg border border-gray-200">
+        <p class="text-gray-600 mb-8 text-center text-sm sm:text-base">
+          Completa los datos y genera el XML de Nómina electrónica (base UBL). Los cálculos incluyen devengados, deducciones, provisiones y, si aplica, liquidación.
+        </p>
+        <hr class="border-gray-200 mb-8"/>
+
+        <form id="nominaForm" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mb-8">
+          <!-- Empleador -->
+          <div class="md:col-span-2">
+            <h2 class="text-2xl font-bold text-[#132F63] mb-4">Datos del Empleador</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div>
+                <label for="nit" class="block text-sm font-medium text-gray-700">NIT</label>
+                <input id="nit" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="900000000" required />
+              </div>
+              <div>
+                <label for="razonSocial" class="block text-sm font-medium text-gray-700">Razón Social</label>
+                <input id="razonSocial" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Hotel Ejemplo S.A.S." required />
+              </div>
+              <div>
+                <label for="direccion" class="block text-sm font-medium text-gray-700">Dirección</label>
+                <input id="direccion" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Cra 1 # 2-34" />
+              </div>
+              <div>
+                <label for="municipio" class="block text-sm font-medium text-gray-700">Municipio</label>
+                <input id="municipio" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Bogotá" />
+              </div>
+              <div>
+                <label for="codigoPostal" class="block text-sm font-medium text-gray-700">Código Postal</label>
+                <input id="codigoPostal" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="110111" />
+              </div>
             </div>
-        </header>
+          </div>
 
-        <!-- Content Area with Form -->
-        <div class="main-content flex justify-center items-start pt-10 pb-10">
-            <div class="w-full max-w-4xl bg-white p-8 sm:p-10 rounded-xl shadow-lg border border-gray-200">
-                <p class="text-gray-600 mb-8 text-center text-sm sm:text-base">
-                    Ingresa los datos del empleado y los conceptos de la nómina para generar el documento XML.
-                </p>
-                <hr class="border-gray-200 mb-8">
-
-                <form id="nominaForm" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mb-8">
-                    <!-- Datos del Empleador -->
-                    <div class="md:col-span-2">
-                        <h2 class="text-2xl font-bold text-[#132F63] mb-4">Datos del Empleador</h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div>
-                                <label for="nit" class="block text-sm font-medium text-gray-700">NIT de la Empresa</label>
-                                <input type="text" id="nit" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 900000000" aria-label="NIT del Empleador" required>
-                            </div>
-                            <div>
-                                <label for="razonSocial" class="block text-sm font-medium text-gray-700">Razón Social</label>
-                                <input type="text" id="razonSocial" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: Hotel Ejemplo S.A.S." aria-label="Razón Social" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Datos del Empleado -->
-                    <div>
-                        <h2 class="text-2xl font-bold text-[#132F63] mb-4">Datos del Empleado</h2>
-                        <div class="space-y-6">
-                            <div>
-                                <label for="nombreEmpleado" class="block text-sm font-medium text-gray-700">Nombre del Empleado</label>
-                                <input type="text" id="nombreEmpleado" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: Juan Pérez" aria-label="Nombre del Empleado" required>
-                            </div>
-                            <div>
-                                <label for="tipoDocumento" class="block text-sm font-medium text-gray-700">Tipo de Documento</label>
-                                <select id="tipoDocumento" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" aria-label="Tipo de Documento" required>
-                                    <option value="CC">Cédula de Ciudadanía (CC)</option>
-                                    <option value="CE">Cédula de Extranjería (CE)</option>
-                                    <option value="PA">Pasaporte (PA)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="identificacion" class="block text-sm font-medium text-gray-700">Número de Documento</label>
-                                <input type="text" id="identificacion" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 12345678" aria-label="Número de Identificación" required>
-                            </div>
-                            <div>
-                                <label for="cargo" class="block text-sm font-medium text-gray-700">Cargo</label>
-                                <input type="text" id="cargo" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: Gerente" aria-label="Cargo del Empleado" required>
-                            </div>
-                            <div>
-                                <label for="tipoContrato" class="block text-sm font-medium text-gray-700">Tipo de Contrato</label>
-                                <select id="tipoContrato" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" aria-label="Tipo de Contrato" required>
-                                    <option value="Fijo">Fijo</option>
-                                    <option value="Indefinido">Indefinido</option>
-                                    <option value="Servicios">Prestación de Servicios</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="fechaInicioContrato" class="block text-sm font-medium text-gray-700">Fecha de Inicio</label>
-                                <input type="date" id="fechaInicioContrato" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" aria-label="Fecha de inicio del contrato" required>
-                            </div>
-                            <div>
-                                <label for="centroCosto" class="block text-sm font-medium text-gray-700">Centro de Costo</label>
-                                <input type="text" id="centroCosto" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: Cocina Principal" aria-label="Centro de costo o dependencia" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Conceptos de la Nómina -->
-                    <div>
-                        <h2 class="text-2xl font-bold text-[#132F63] mb-4">Conceptos de Nómina</h2>
-                        <div class="space-y-6">
-                            <div>
-                                <label for="salarioBase" class="block text-sm font-medium text-gray-700">Salario Base ($)</label>
-                                <input type="number" id="salarioBase" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 1423500" aria-label="Salario Base" required>
-                            </div>
-                            <div>
-                                <label for="diasTrabajados" class="block text-sm font-medium text-gray-700">Días Trabajados</label>
-                                <input type="number" id="diasTrabajados" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 30" aria-label="Días Trabajados" required>
-                            </div>
-                            <div>
-                                <label for="horasExtras" class="block text-sm font-medium text-gray-700">Horas Extras ($)</label>
-                                <input type="number" id="horasExtras" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 50000" aria-label="Valor de horas extras">
-                            </div>
-                            <div>
-                                <label for="comisiones" class="block text-sm font-medium text-gray-700">Comisiones ($)</label>
-                                <input type="number" id="comisiones" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 100000" aria-label="Valor de comisiones">
-                            </div>
-                            <div>
-                                <label for="bonificaciones" class="block text-sm font-medium text-gray-700">Bonificaciones ($)</label>
-                                <input type="number" id="bonificaciones" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 80000" aria-label="Valor de bonificaciones">
-                            </div>
-                            <div>
-                                <label for="libranzas" class="block text-sm font-medium text-gray-700">Libranzas ($)</label>
-                                <input type="number" id="libranzas" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 20000" aria-label="Valor de libranzas">
-                            </div>
-                            <div>
-                                <label for="retenciones" class="block text-sm font-medium text-gray-700">Retención en la Fuente ($)</label>
-                                <input type="number" id="retenciones" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 15000" aria-label="Valor de retenciones">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Sección de Liquidación de Contrato -->
-                    <div class="md:col-span-2">
-                        <h2 class="text-2xl font-bold text-[#132F63] mb-4 mt-6">Liquidación de Contrato</h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div>
-                                <label for="fechaFinContrato" class="block text-sm font-medium text-gray-700">Fecha de Terminación</label>
-                                <input type="date" id="fechaFinContrato" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" aria-label="Fecha de terminación del contrato">
-                            </div>
-                            <div>
-                                <label for="causaTerminacion" class="block text-sm font-medium text-gray-700">Causa de Terminación</label>
-                                <select id="causaTerminacion" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" aria-label="Causa de terminación del contrato">
-                                    <option value="">Selecciona...</option>
-                                    <option value="justa">Con Justa Causa</option>
-                                    <option value="sin_justa">Sin Justa Causa</option>
-                                    <option value="renuncia">Renuncia Voluntaria</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div id="liquidacionResultados" class="hidden mt-6 bg-yellow-100 p-4 rounded-lg">
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">Resumen de Liquidación de Contrato</h3>
-                            <p class="text-sm text-gray-600">Días para liquidar: <span id="diasLiquidarDisplay">0</span></p>
-                            <div class="grid grid-cols-2 gap-4 mt-4">
-                                <div>
-                                    <span class="block text-sm font-medium text-gray-700">Vacaciones Liquidadas</span>
-                                    <span id="vacacionesLiquidadasDisplay" class="block text-lg font-bold text-gray-800">$0.00</span>
-                                </div>
-                                <div>
-                                    <span class="block text-sm font-medium text-gray-700">Cesantías Liquidadas</span>
-                                    <span id="cesantiasLiquidadasDisplay" class="block text-lg font-bold text-gray-800">$0.00</span>
-                                </div>
-                                <div>
-                                    <span class="block text-sm font-medium text-gray-700">Prima Liquidada</span>
-                                    <span id="primaLiquidadaDisplay" class="block text-lg font-bold text-gray-800">$0.00</span>
-                                </div>
-                                <div>
-                                    <span class="block text-sm font-medium text-gray-700">Indemnización</span>
-                                    <span id="indemnizacionDisplay" class="block text-lg font-bold text-gray-800">$0.00</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Campos de Liquidación de Nómina -->
-                    <div class="md:col-span-2">
-                        <h2 class="text-2xl font-bold text-[#132F63] mb-4 mt-6">Resumen de Liquidación</h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                            <div class="bg-blue-100 p-4 rounded-lg">
-                                <span class="block text-sm font-medium text-gray-700">Total Devengado</span>
-                                <span id="totalDevengadoDisplay" class="block text-2xl font-bold text-[#132F63] mt-2">$0.00</span>
-                            </div>
-                            <div class="bg-red-100 p-4 rounded-lg">
-                                <span class="block text-sm font-medium text-gray-700">Total Deducciones</span>
-                                <span id="totalDeduccionesDisplay" class="block text-2xl font-bold text-[#132F63] mt-2">$0.00</span>
-                            </div>
-                            <div class="bg-green-100 p-4 rounded-lg">
-                                <span class="block text-sm font-medium text-gray-700">Neto a Pagar</span>
-                                <span id="netoPagarDisplay" class="block text-2xl font-bold text-[#132F63] mt-2">$0.00</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Campos de Provisiones -->
-                    <div class="md:col-span-2">
-                        <h2 class="text-2xl font-bold text-[#132F63] mb-4 mt-6">Provisiones y Prestaciones</h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
-                            <div class="bg-purple-100 p-4 rounded-lg">
-                                <span class="block text-sm font-medium text-gray-700">Cesantías</span>
-                                <span id="cesantiasDisplay" class="block text-xl font-bold text-[#132F63] mt-2">$0.00</span>
-                            </div>
-                            <div class="bg-purple-100 p-4 rounded-lg">
-                                <span class="block text-sm font-medium text-gray-700">Intereses Cesantías</span>
-                                <span id="interesesCesantiasDisplay" class="block text-xl font-bold text-[#132F63] mt-2">$0.00</span>
-                            </div>
-                            <div class="bg-purple-100 p-4 rounded-lg">
-                                <span class="block text-sm font-medium text-gray-700">Prima de Servicios</span>
-                                <span id="primaServiciosDisplay" class="block text-xl font-bold text-[#132F63] mt-2">$0.00</span>
-                            </div>
-                            <div class="bg-purple-100 p-4 rounded-lg">
-                                <span class="block text-sm font-medium text-gray-700">Vacaciones</span>
-                                <span id="vacacionesDisplay" class="block text-xl font-bold text-[#132F63] mt-2">$0.00</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Botón de Envío -->
-                    <div class="md:col-span-2">
-                        <button type="submit" id="submitButton" class="w-full flex justify-center py-3 px-6 border border-transparent rounded-md shadow-lg text-lg font-bold text-[#132F63] bg-[#FABB5A] hover:bg-[#EAA842] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FABB5A] transition-colors">
-                            Generar Nómina
-                        </button>
-                    </div>
-                </form>
-
-                <!-- Sección de resultados y XML -->
-                <div id="resultsContainer" class="hidden">
-                    <h2 class="text-2xl font-bold text-[#132F63] mb-4">Documento XML Generado</h2>
-                    <pre id="xmlOutput" class="w-full bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm sm:text-base"></pre>
-
-                    <div class="mt-6 flex flex-col sm:flex-row gap-4">
-                        <button id="copyButton" class="w-full sm:w-1/2 flex justify-center py-3 px-6 border border-transparent rounded-md shadow-sm text-lg font-bold text-white bg-[#F6554D] hover:bg-[#E6443C] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F6554D] transition-colors">
-                            Copiar XML
-                        </button>
-                        <button id="downloadButton" class="w-full sm:w-1/2 flex justify-center py-3 px-6 border border-transparent rounded-md shadow-sm text-lg font-bold text-white bg-[#F6554D] hover:bg-[#E6443C] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F6554D] transition-colors">
-                            Descargar XML
-                        </button>
-                    </div>
-                </div>
+          <!-- Periodo / Pago -->
+          <div class="md:col-span-2">
+            <h2 class="text-2xl font-bold text-[#132F63] mb-4">Periodo de Pago</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div>
+                <label for="periodoInicio" class="block text-sm font-medium text-gray-700">Fecha inicio</label>
+                <input type="date" id="periodoInicio" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" required />
+              </div>
+              <div>
+                <label for="periodoFin" class="block text-sm font-medium text-gray-700">Fecha fin</label>
+                <input type="date" id="periodoFin" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" required />
+              </div>
+              <div>
+                <label for="formaPago" class="block text-sm font-medium text-gray-700">Forma de pago</label>
+                <select id="formaPago" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field">
+                  <option value="Transferencia">Transferencia</option>
+                  <option value="Efectivo">Efectivo</option>
+                  <option value="Cheque">Cheque</option>
+                </select>
+              </div>
             </div>
-        </div>
+          </div>
 
-        <!-- Notificación Toast -->
-        <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-md shadow-lg text-white text-center transition-all duration-300 ease-in-out hidden">
-            <span id="toast-message"></span>
+          <!-- Empleado -->
+          <div>
+            <h2 class="text-2xl font-bold text-[#132F63] mb-4">Datos del Empleado</h2>
+            <div class="space-y-6">
+              <div>
+                <label for="nombreEmpleado" class="block text-sm font-medium text-gray-700">Nombre</label>
+                <input id="nombreEmpleado" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Juan Pérez" required />
+              </div>
+              <div>
+                <label for="tipoDocumento" class="block text-sm font-medium text-gray-700">Tipo de Documento</label>
+                <select id="tipoDocumento" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" required>
+                  <option value="CC">Cédula (CC)</option>
+                  <option value="CE">C. Extranjería (CE)</option>
+                  <option value="PA">Pasaporte (PA)</option>
+                </select>
+              </div>
+              <div>
+                <label for="identificacion" class="block text-sm font-medium text-gray-700">Número</label>
+                <input id="identificacion" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="12345678" required />
+              </div>
+              <div>
+                <label for="cargo" class="block text-sm font-medium text-gray-700">Cargo</label>
+                <input id="cargo" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Recepcionista" required />
+              </div>
+              <div>
+                <label for="tipoContrato" class="block text-sm font-medium text-gray-700">Tipo de contrato</label>
+                <select id="tipoContrato" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" required>
+                  <option value="Fijo">Fijo</option>
+                  <option value="Indefinido">Indefinido</option>
+                  <option value="Servicios">Prestación de Servicios</option>
+                </select>
+              </div>
+              <div>
+                <label for="fechaInicioContrato" class="block text-sm font-medium text-gray-700">Fecha inicio contrato</label>
+                <input type="date" id="fechaInicioContrato" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" required />
+              </div>
+              <div>
+                <label for="centroCosto" class="block text-sm font-medium text-gray-700">Centro de costo</label>
+                <input id="centroCosto" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Cocina" required />
+              </div>
+            </div>
+          </div>
+
+          <!-- Conceptos -->
+          <div>
+            <h2 class="text-2xl font-bold text-[#132F63] mb-4">Conceptos de Nómina</h2>
+            <div class="space-y-6">
+              <div>
+                <label for="salarioBase" class="block text-sm font-medium text-gray-700">Salario Base ($)</label>
+                <input type="number" id="salarioBase" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="1423500" required />
+              </div>
+              <div>
+                <label for="diasTrabajados" class="block text-sm font-medium text-gray-700">Días trabajados</label>
+                <input type="number" id="diasTrabajados" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="30" required />
+              </div>
+              <div>
+                <label for="horasExtras" class="block text-sm font-medium text-gray-700">Horas Extras ($)</label>
+                <input type="number" id="horasExtras" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="50000" />
+              </div>
+              <div>
+                <label for="recargosNocturnos" class="block text-sm font-medium text-gray-700">Recargos Nocturnos ($)</label>
+                <input type="number" id="recargosNocturnos" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="0" />
+              </div>
+              <div>
+                <label for="dominicalesFestivos" class="block text-sm font-medium text-gray-700">Dominicales/Festivos ($)</label>
+                <input type="number" id="dominicalesFestivos" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="0" />
+              </div>
+              <div>
+                <label for="propinas" class="block text-sm font-medium text-gray-700">Propinas ($)</label>
+                <input type="number" id="propinas" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="0" />
+              </div>
+              <div>
+                <label for="comisiones" class="block text-sm font-medium text-gray-700">Comisiones ($)</label>
+                <input type="number" id="comisiones" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="0" />
+              </div>
+              <div>
+                <label for="bonificaciones" class="block text-sm font-medium text-gray-700">Bonificaciones ($)</label>
+                <input type="number" id="bonificaciones" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="0" />
+              </div>
+              <div>
+                <label for="libranzas" class="block text-sm font-medium text-gray-700">Libranzas ($)</label>
+                <input type="number" id="libranzas" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="0" />
+              </div>
+              <div>
+                <label for="retenciones" class="block text-sm font-medium text-gray-700">Retención en la Fuente ($)</label>
+                <input type="number" id="retenciones" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="0" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Liquidación -->
+          <div class="md:col-span-2">
+            <h2 class="text-2xl font-bold text-[#132F63] mb-4 mt-6">Liquidación de Contrato (opcional)</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label for="fechaFinContrato" class="block text-sm font-medium text-gray-700">Fecha de terminación</label>
+                <input type="date" id="fechaFinContrato" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" />
+              </div>
+              <div>
+                <label for="causaTerminacion" class="block text-sm font-medium text-gray-700">Causa</label>
+                <select id="causaTerminacion" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field">
+                  <option value="">Selecciona…</option>
+                  <option value="justa">Con justa causa</option>
+                  <option value="sin_justa">Sin justa causa</option>
+                  <option value="renuncia">Renuncia voluntaria</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="liquidacionResultados" class="hidden mt-6 bg-yellow-100 p-4 rounded-lg">
+              <h3 class="text-xl font-bold text-gray-800 mb-2">Resumen de Liquidación</h3>
+              <p class="text-sm text-gray-600">Días a liquidar: <span id="diasLiquidarDisplay">0</span></p>
+              <div class="grid grid-cols-2 gap-4 mt-4">
+                <div><span class="block text-sm font-medium text-gray-700">Vacaciones liquidadas</span><span id="vacacionesLiquidadasDisplay" class="block text-lg font-bold text-gray-800">$0.00</span></div>
+                <div><span class="block text-sm font-medium text-gray-700">Cesantías liquidadas</span><span id="cesantiasLiquidadasDisplay" class="block text-lg font-bold text-gray-800">$0.00</span></div>
+                <div><span class="block text-sm font-medium text-gray-700">Prima liquidada</span><span id="primaLiquidadaDisplay" class="block text-lg font-bold text-gray-800">$0.00</span></div>
+                <div><span class="block text-sm font-medium text-gray-700">Indemnización</span><span id="indemnizacionDisplay" class="block text-lg font-bold text-gray-800">$0.00</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Totales -->
+          <div class="md:col-span-2">
+            <h2 class="text-2xl font-bold text-[#132F63] mb-4 mt-6">Resumen</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+              <div class="bg-blue-100 p-4 rounded-lg">
+                <span class="block text-sm font-medium text-gray-700">Total Devengado</span>
+                <span id="totalDevengadoDisplay" class="block text-2xl font-bold text-[#132F63] mt-2">$0.00</span>
+              </div>
+              <div class="bg-red-100 p-4 rounded-lg">
+                <span class="block text-sm font-medium text-gray-700">Total Deducciones</span>
+                <span id="totalDeduccionesDisplay" class="block text-2xl font-bold text-[#132F63] mt-2">$0.00</span>
+              </div>
+              <div class="bg-green-100 p-4 rounded-lg">
+                <span class="block text-sm font-medium text-gray-700">Neto a Pagar</span>
+                <span id="netoPagarDisplay" class="block text-2xl font-bold text-[#132F63] mt-2">$0.00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Provisiones -->
+          <div class="md:col-span-2">
+            <h2 class="text-2xl font-bold text-[#132F63] mb-4 mt-6">Provisiones y Prestaciones</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+              <div class="bg-purple-100 p-4 rounded-lg"><span class="block text-sm font-medium text-gray-700">Cesantías</span><span id="cesantiasDisplay" class="block text-xl font-bold text-[#132F63] mt-2">$0.00</span></div>
+              <div class="bg-purple-100 p-4 rounded-lg"><span class="block text-sm font-medium text-gray-700">Intereses Cesantías</span><span id="interesesCesantiasDisplay" class="block text-xl font-bold text-[#132F63] mt-2">$0.00</span></div>
+              <div class="bg-purple-100 p-4 rounded-lg"><span class="block text-sm font-medium text-gray-700">Prima</span><span id="primaServiciosDisplay" class="block text-xl font-bold text-[#132F63] mt-2">$0.00</span></div>
+              <div class="bg-purple-100 p-4 rounded-lg"><span class="block text-sm font-medium text-gray-700">Vacaciones</span><span id="vacacionesDisplay" class="block text-xl font-bold text-[#132F63] mt-2">$0.00</span></div>
+            </div>
+          </div>
+
+          <!-- Enviar -->
+          <div class="md:col-span-2">
+            <button type="submit" id="submitButton" class="w-full flex justify-center py-3 px-6 rounded-md shadow-lg text-lg font-bold text-[#132F63] bg-[#FABB5A] hover:bg-[#EAA842] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FABB5A] transition-colors">
+              Generar Nómina
+            </button>
+          </div>
+        </form>
+
+        <!-- XML -->
+        <div id="resultsContainer" class="hidden">
+          <h2 class="text-2xl font-bold text-[#132F63] mb-4">XML generado</h2>
+          <pre id="xmlOutput" class="w-full bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm sm:text-base"></pre>
+          <div class="mt-6 flex flex-col sm:flex-row gap-4">
+            <button id="copyButton" class="w-full sm:w-1/2 flex justify-center py-3 px-6 rounded-md text-lg font-bold text-white bg-[#F6554D] hover:bg-[#E6443C]">Copiar XML</button>
+            <button id="downloadButton" class="w-full sm:w-1/2 flex justify-center py-3 px-6 rounded-md text-lg font-bold text-white bg-[#F6554D] hover:bg-[#E6443C]">Descargar XML</button>
+          </div>
         </div>
-    </main>
-    
-    <!-- Enlaza el archivo JavaScript para la lógica -->
-    <script src="script.js"></script>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-md shadow-lg text-white text-center transition-all duration-300 ease-in-out hidden">
+      <span id="toast-message"></span>
+    </div>
+  </main>
+
+  <!-- OJO: si tu archivo se llama "scritp.js", usa esa ruta; si lo renombraste a "script.js", actualiza aquí -->
+  <script src="scritp.js"></script>
 </body>
 </html>
-
