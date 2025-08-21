@@ -1,0 +1,44 @@
+/* Importar la fuente Inter de Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap');
+
+/* Incluir Tailwind CSS desde CDN para su uso con clases puras */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos básicos del cuerpo del documento */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #F8F9FA; /* Gris muy claro para un look más limpio */
+    overflow-x: hidden; /* Evita el scroll horizontal */
+}
+
+/* Estilos de la barra lateral (Sidebar) */
+.sidebar {
+    background-color: #132F63; /* Azul marino */
+}
+
+/* Estilos del área de contenido principal */
+.main-content {
+    background-color: #F8F9FA; /* Gris muy claro */
+    flex-grow: 1;
+}
+
+/* Estilos para los campos de entrada de formulario */
+.input-field {
+    transition: all 0.3s ease-in-out;
+    border: 1px solid #d1d5db;
+}
+
+/* Estilos para el campo de entrada cuando está enfocado */
+.input-field:focus {
+    border-color: #132F63; /* Color azul corporativo en focus */
+    box-shadow: 0 0 0 2px rgba(19, 47, 99, 0.5);
+    outline: none;
+}
+
+/* Estilos para el elemento de menú que está activo */
+.active-menu-item {
+    border-left: 4px solid #FABB5A; /* Borde lateral para el elemento activo */
+    background-color: rgba(255, 255, 255, 0.1);
+}
