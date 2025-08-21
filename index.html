@@ -102,7 +102,7 @@
                     <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
                         <!-- Icono de Configuración -->
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mr-3">
-                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2v-.44a2 2 0 0 0 2-2h.44a2 2 0 0 1 2-2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1-2-2v-.44a2 2 0 0 0-2-2v-.44a2 2 0 0 1-2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2h.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2h.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1-2-2v-.44a2 2 0 0 0-2-2v-.44a2 2 0 0 1-2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2z"/>
+                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2v-.44a2 2 0 0 0 2-2h.44a2 2 0 0 1 2-2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1-2-2v-.44a2 2 0 0 0-2-2v-.44a2 2 0 0 1-2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2h.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2h.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2h.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2h.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1-2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2z"/>
                             <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
                         </svg>
                         Configuración
@@ -249,6 +249,28 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Campos de Provisiones -->
+                    <div class="md:col-span-2">
+                        <h2 class="text-2xl font-bold text-[#132F63] mb-4 mt-6">Provisiones y Prestaciones</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+                            <div class="bg-purple-100 p-4 rounded-lg">
+                                <span class="block text-sm font-medium text-gray-700">Cesantías</span>
+                                <span id="cesantiasDisplay" class="block text-xl font-bold text-[#132F63] mt-2">$0.00</span>
+                            </div>
+                            <div class="bg-purple-100 p-4 rounded-lg">
+                                <span class="block text-sm font-medium text-gray-700">Intereses Cesantías</span>
+                                <span id="interesesCesantiasDisplay" class="block text-xl font-bold text-[#132F63] mt-2">$0.00</span>
+                            </div>
+                            <div class="bg-purple-100 p-4 rounded-lg">
+                                <span class="block text-sm font-medium text-gray-700">Prima de Servicios</span>
+                                <span id="primaServiciosDisplay" class="block text-xl font-bold text-[#132F63] mt-2">$0.00</span>
+                            </div>
+                            <div class="bg-purple-100 p-4 rounded-lg">
+                                <span class="block text-sm font-medium text-gray-700">Vacaciones</span>
+                                <span id="vacacionesDisplay" class="block text-xl font-bold text-[#132F63] mt-2">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Botón de Envío -->
                     <div class="md:col-span-2">
@@ -284,7 +306,7 @@
     <script>
         // --- FUNCIÓN DE CÁLCULO DE NÓMINA ---
         function calcularNomina() {
-            // Constantes (valores de referencia)
+            // Constantes (valores de referencia para el año 2025)
             const SALARIO_MINIMO_2025 = 1423500;
             const AUXILIO_TRANSPORTE_2025 = 200000;
 
@@ -304,6 +326,12 @@
             const deduccionSalud = sueldoDevengado * 0.04;
             const deduccionPension = sueldoDevengado * 0.04;
 
+            // Cálculos de Provisiones
+            const cesantias = (sueldoDevengado + auxilioTransporte) * 0.0833;
+            const interesesCesantias = cesantias * 0.01;
+            const primaServicios = (sueldoDevengado + auxilioTransporte) * 0.0833;
+            const vacaciones = sueldoDevengado * 0.0417;
+
             // Totales
             const totalDevengado = sueldoDevengado + auxilioTransporte + horasExtras + comisiones + bonificaciones;
             const totalDeducciones = deduccionSalud + deduccionPension + libranzas + retenciones;
@@ -319,6 +347,10 @@
                 pension: deduccionPension,
                 libranzas: libranzas,
                 retenciones: retenciones,
+                cesantias: cesantias,
+                interesesCesantias: interesesCesantias,
+                primaServicios: primaServicios,
+                vacaciones: vacaciones,
                 totalDevengado: totalDevengado,
                 totalDeducciones: totalDeducciones,
                 netoPagar: netoPagar
@@ -331,6 +363,10 @@
             document.getElementById('totalDevengadoDisplay').textContent = resultados.totalDevengado.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
             document.getElementById('totalDeduccionesDisplay').textContent = resultados.totalDeducciones.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
             document.getElementById('netoPagarDisplay').textContent = resultados.netoPagar.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+            document.getElementById('cesantiasDisplay').textContent = resultados.cesantias.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+            document.getElementById('interesesCesantiasDisplay').textContent = resultados.interesesCesantias.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+            document.getElementById('primaServiciosDisplay').textContent = resultados.primaServicios.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+            document.getElementById('vacacionesDisplay').textContent = resultados.vacaciones.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
         }
 
         // --- FUNCIÓN DE GENERACIÓN DE XML ---
@@ -381,6 +417,14 @@
             deducciones.appendChild(xmlDoc.createElement("Libranzas")).setAttribute("valor", Math.round(datos.libranzas).toString());
             deducciones.appendChild(xmlDoc.createElement("Retenciones")).setAttribute("valor", Math.round(datos.retenciones).toString());
             root.appendChild(deducciones);
+
+            // Provisiones y Prestaciones
+            const provisiones = xmlDoc.createElement("Provisiones");
+            provisiones.appendChild(xmlDoc.createElement("Cesantias")).setAttribute("valor", Math.round(datos.cesantias).toString());
+            provisiones.appendChild(xmlDoc.createElement("InteresesCesantias")).setAttribute("valor", Math.round(datos.interesesCesantias).toString());
+            provisiones.appendChild(xmlDoc.createElement("PrimaServicios")).setAttribute("valor", Math.round(datos.primaServicios).toString());
+            provisiones.appendChild(xmlDoc.createElement("Vacaciones")).setAttribute("valor", Math.round(datos.vacaciones).toString());
+            root.appendChild(provisiones);
             
             const serializer = new XMLSerializer();
             return serializer.serializeToString(xmlDoc);
@@ -438,6 +482,10 @@
                 document.getElementById('totalDevengadoDisplay').textContent = resultados.totalDevengado.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
                 document.getElementById('totalDeduccionesDisplay').textContent = resultados.totalDeducciones.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
                 document.getElementById('netoPagarDisplay').textContent = resultados.netoPagar.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+                document.getElementById('cesantiasDisplay').textContent = resultados.cesantias.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+                document.getElementById('interesesCesantiasDisplay').textContent = resultados.interesesCesantias.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+                document.getElementById('primaServiciosDisplay').textContent = resultados.primaServicios.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+                document.getElementById('vacacionesDisplay').textContent = resultados.vacaciones.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
 
                 const xmlString = generarXML({ ...formInputs, ...resultados });
                 document.getElementById('xmlOutput').textContent = xmlString;
