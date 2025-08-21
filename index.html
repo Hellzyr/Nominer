@@ -1,212 +1,320 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Software de Nómina</title>
-  <link rel="stylesheet" href="styles.css" />
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software de Nómina</title>
+    <!-- Incluye el framework Tailwind CSS desde su CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Enlace a la hoja de estilos externa -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Importar la fuente Inter de Google Fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap');
+    </style>
 </head>
 <body class="flex min-h-screen">
-  <!-- Sidebar -->
-  <aside id="sidebar" class="sidebar w-64 p-6 flex flex-col items-start space-y-4 shadow-xl">
-    <div class="mb-8">
-      <h1 class="text-3xl font-extrabold text-white">Nómina</h1>
-      <h2 class="text-xs font-light text-gray-300">Software para la DIAN</h2>
-    </div>
-    <nav class="w-full">
-      <ul class="space-y-2">
-        <li>
-          <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
-            <i data-lucide="layout-dashboard" class="mr-2"></i> Dashboard
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center p-3 text-lg font-bold text-white rounded-md transition-colors active-menu-item">
-            <i data-lucide="file-text" class="mr-2"></i> Nómina
-          </a>
-          <ul class="pl-8 mt-2 space-y-1">
-            <li><a href="#" class="block text-sm text-white hover:text-[#FABB5A] transition-colors">Generar Nómina</a></li>
-            <li><a href="#" class="block text-sm text-gray-300 hover:text-[#FABB5A] transition-colors">Historial de Nóminas</a></li>
-            <li><a href="#" class="block text-sm text-gray-300 hover:text-[#FABB5A] transition-colors">Liquidación de Contrato</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
-            <i data-lucide="users" class="mr-2"></i> Empleados
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
-            <i data-lucide="bar-chart-3" class="mr-2"></i> Reportes
-          </a>
-        </li>
-        <li>
-          <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
-            <i data-lucide="settings" class="mr-2"></i> Configuración
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
 
-  <!-- Contenido principal -->
-  <main class="flex-1 flex flex-col">
-    <header class="bg-white p-4 sm:p-6 flex justify-between items-center shadow-md">
-      <h1 class="text-4xl font-extrabold text-[#132F63]">Generar Nómina</h1>
-      <div class="flex items-center space-x-4">
-        <!-- Campana -->
-        <button aria-label="Notificaciones" class="text-gray-500 hover:text-[#FABB5A] transition-colors">
-          <i data-lucide="bell"></i>
-        </button>
-        <!-- Perfil -->
-        <div aria-label="Perfil de usuario" class="h-10 w-10 rounded-full bg-[#FABB5A] flex items-center justify-center text-white font-bold">UN</div>
-      </div>
-    </header>
-
-    <div class="main-content flex justify-center items-start pt-10 pb-10">
-      <div class="w-full max-w-5xl bg-white p-8 sm:p-10 rounded-xl shadow-lg border border-gray-200">
-        <p class="text-gray-600 mb-8 text-center text-sm sm:text-base">
-          Completa los datos y genera el XML de Nómina electrónica (base UBL). Los cálculos incluyen devengados, deducciones, provisiones y, si aplica, liquidación.
-        </p>
-        <hr class="border-gray-200 mb-8"/>
-
-        <!-- 🔹 FORMULARIO DE NÓMINA 🔹 -->
-        <form id="nominaForm" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mb-8">
-          <!-- Empleador -->
-          <div class="md:col-span-2">
-            <h2 class="text-2xl font-bold text-[#132F63] mb-4">Datos del Empleador</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div>
-                <label for="nit" class="block text-sm font-medium text-gray-700">NIT</label>
-                <input id="nit" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="900000000" required />
-              </div>
-              <div>
-                <label for="razonSocial" class="block text-sm font-medium text-gray-700">Razón Social</label>
-                <input id="razonSocial" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Hotel Ejemplo S.A.S." required />
-              </div>
-              <div>
-                <label for="direccion" class="block text-sm font-medium text-gray-700">Dirección</label>
-                <input id="direccion" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Cra 1 # 2-34" />
-              </div>
-              <div>
-                <label for="municipio" class="block text-sm font-medium text-gray-700">Municipio</label>
-                <input id="municipio" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Bogotá" />
-              </div>
-              <div>
-                <label for="codigoPostal" class="block text-sm font-medium text-gray-700">Código Postal</label>
-                <input id="codigoPostal" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="110111" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Periodo -->
-          <div class="md:col-span-2">
-            <h2 class="text-2xl font-bold text-[#132F63] mb-4">Periodo de Pago</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div>
-                <label for="periodoInicio" class="block text-sm font-medium text-gray-700">Fecha inicio</label>
-                <input type="date" id="periodoInicio" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" required />
-              </div>
-              <div>
-                <label for="periodoFin" class="block text-sm font-medium text-gray-700">Fecha fin</label>
-                <input type="date" id="periodoFin" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" required />
-              </div>
-              <div>
-                <label for="formaPago" class="block text-sm font-medium text-gray-700">Forma de pago</label>
-                <select id="formaPago" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field">
-                  <option value="Transferencia">Transferencia</option>
-                  <option value="Efectivo">Efectivo</option>
-                  <option value="Cheque">Cheque</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Empleado -->
-          <div>
-            <h2 class="text-2xl font-bold text-[#132F63] mb-4">Datos del Empleado</h2>
-            <div class="space-y-6">
-              <div>
-                <label for="nombreEmpleado" class="block text-sm font-medium text-gray-700">Nombre</label>
-                <input id="nombreEmpleado" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Juan Pérez" required />
-              </div>
-              <div>
-                <label for="tipoDocumento" class="block text-sm font-medium text-gray-700">Tipo de Documento</label>
-                <select id="tipoDocumento" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" required>
-                  <option value="CC">Cédula (CC)</option>
-                  <option value="CE">C. Extranjería (CE)</option>
-                  <option value="PA">Pasaporte (PA)</option>
-                </select>
-              </div>
-              <div>
-                <label for="identificacion" class="block text-sm font-medium text-gray-700">Número</label>
-                <input id="identificacion" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="12345678" required />
-              </div>
-              <div>
-                <label for="cargo" class="block text-sm font-medium text-gray-700">Cargo</label>
-                <input id="cargo" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Recepcionista" required />
-              </div>
-              <div>
-                <label for="tipoContrato" class="block text-sm font-medium text-gray-700">Tipo de contrato</label>
-                <select id="tipoContrato" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" required>
-                  <option value="Fijo">Fijo</option>
-                  <option value="Indefinido">Indefinido</option>
-                  <option value="Servicios">Prestación de Servicios</option>
-                </select>
-              </div>
-              <div>
-                <label for="fechaInicioContrato" class="block text-sm font-medium text-gray-700">Fecha inicio contrato</label>
-                <input type="date" id="fechaInicioContrato" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" required />
-              </div>
-              <div>
-                <label for="centroCosto" class="block text-sm font-medium text-gray-700">Centro de costo</label>
-                <input id="centroCosto" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Cocina" required />
-              </div>
-            </div>
-          </div>
-
-          <!-- Conceptos de nómina -->
-          <!-- (Aquí van los mismos campos de salario, extras, propinas, deducciones, etc. que ya tenías) -->
-          <!-- ... -->
-
-          <!-- Totales / Provisiones / Liquidación / Resultados -->
-          <!-- (También se mantienen iguales, no los repito aquí para que no se duplique demasiado texto) -->
-          <!-- ... -->
-
-          <div class="md:col-span-2">
-            <button type="submit" id="submitButton" class="w-full flex justify-center py-3 px-6 rounded-md shadow-lg text-lg font-bold text-[#132F63] bg-[#FABB5A] hover:bg-[#EAA842] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FABB5A] transition-colors">
-              Generar Nómina
-            </button>
-          </div>
-        </form>
-
-        <!-- XML generado -->
-        <div id="resultsContainer" class="hidden">
-          <h2 class="text-2xl font-bold text-[#132F63] mb-4">XML generado</h2>
-          <pre id="xmlOutput" class="w-full bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm sm:text-base"></pre>
-          <div class="mt-6 flex flex-col sm:flex-row gap-4">
-            <button id="copyButton" class="w-full sm:w-1/2 flex justify-center py-3 px-6 rounded-md text-lg font-bold text-white bg-[#F6554D] hover:bg-[#E6443C]">Copiar XML</button>
-            <button id="downloadButton" class="w-full sm:w-1/2 flex justify-center py-3 px-6 rounded-md text-lg font-bold text-white bg-[#F6554D] hover:bg-[#E6443C]">Descargar XML</button>
-          </div>
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar w-64 p-6 flex flex-col items-start space-y-4 shadow-xl">
+        <div class="mb-8">
+            <h1 class="text-3xl font-extrabold text-white">Nomina</h1>
+            <h2 class="text-xs font-light text-gray-300">Software para la DIAN</h2>
         </div>
-      </div>
-    </div>
+        <nav class="w-full">
+            <ul class="space-y-2">
+                <li>
+                    <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
+                        <!-- Icono de Dashboard -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mr-3">
+                            <rect x="3" y="3" width="7" height="9"/>
+                            <rect x="14" y="3" width="7" height="5"/>
+                            <rect x="14" y="12" width="7" height="5"/>
+                            <rect x="3" y="16" width="7" height="5"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center p-3 text-lg font-bold text-white rounded-md transition-colors active-menu-item">
+                        <!-- Icono de Nómina -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mr-3">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" x2="8" y1="13" y2="13"/>
+                            <line x1="16" x2="8" y1="17" y2="17"/>
+                            <line x1="10" x2="8" y1="9" y2="9"/>
+                        </svg>
+                        Nómina
+                    </a>
+                    <ul class="pl-8 mt-2 space-y-1">
+                        <li><a href="#" class="block text-sm text-white hover:text-[#FABB5A] transition-colors">Generar Nómina</a></li>
+                        <li><a href="#" class="block text-sm text-gray-300 hover:text-[#FABB5A] transition-colors">Historial de Nóminas</a></li>
+                        <li><a href="#" class="block text-sm text-gray-300 hover:text-[#FABB5A] transition-colors">Liquidación de Contrato</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
+                        <!-- Icono de Empleados -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mr-3">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        Empleados
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
+                        <!-- Icono de Reportes -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mr-3">
+                            <path d="M21.54 15H17a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4.54a1 1 0 0 1 .84 1.5l-2.43 4.54a1.72 1.72 0 0 1 0 1.92l2.43 4.54a1 1 0 0 1-.84 1.5z"/>
+                            <path d="M3.5 15H8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H3.5A1.5 1.5 0 0 0 2 6.5v8A1.5 1.5 0 0 0 3.5 15z"/>
+                            <path d="M12 19V5"/>
+                            <path d="M10 17l2-2"/>
+                            <path d="M14 17l-2-2"/>
+                        </svg>
+                        Reportes
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center p-3 text-lg font-bold text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10 rounded-md transition-colors">
+                        <!-- Icono de Configuración -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 mr-3">
+                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2h-.44a2 2 0 0 0-2 2v.44a2 2 0 0 1-2 2v-.44a2 2 0 0 0 2-2h.44a2 2 0 0 1 2-2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1-2-2v-.44a2 2 0 0 0-2-2v-.44a2 2 0 0 1-2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2h.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v-.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1 2-2h.44a2 2 0 0 0 2-2v-.44a2 2 0 0 1-2-2h-.44a2 2 0 0 0-2-2v.44a2 2 0 0 1-2 2h.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2v.44a2 2 0 0 0 2 2h.44a2 2 0 0 1 2 2z"/>
+                            <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                        </svg>
+                        Configuración
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-md shadow-lg text-white text-center transition-all duration-300 ease-in-out hidden">
-      <span id="toast-message"></span>
-    </div>
-  </main>
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col">
+        <!-- Header -->
+        <header class="bg-white p-4 sm:p-6 flex justify-between items-center shadow-md">
+            <h1 class="text-4xl font-extrabold text-[#132F63]">Generar Nómina</h1>
+            <div class="flex items-center space-x-4">
+                <button aria-label="Notificaciones" class="text-gray-500 hover:text-[#FABB5A] transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.42 6.421 6 8.527 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </button>
+                <div aria-label="Perfil de usuario" class="h-10 w-10 rounded-full bg-[#FABB5A] flex items-center justify-center text-white font-bold">
+                    UN
+                </div>
+            </div>
+        </header>
 
-  <!-- Script de lógica -->
-  <script src="scritp.js"></script>
-  <!-- Inicializar Lucide -->
-  <script>
-    lucide.createIcons();
-  </script>
+        <!-- Content Area with Form -->
+        <div class="main-content flex justify-center items-start pt-10 pb-10">
+            <div class="w-full max-w-4xl bg-white p-8 sm:p-10 rounded-xl shadow-lg border border-gray-200">
+                <p class="text-gray-600 mb-8 text-center text-sm sm:text-base">
+                    Ingresa los datos del empleado y los conceptos de la nómina para generar el documento XML.
+                </p>
+                <hr class="border-gray-200 mb-8">
+
+                <form id="nominaForm" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mb-8">
+                    <!-- Datos del Empleador -->
+                    <div class="md:col-span-2">
+                        <h2 class="text-2xl font-bold text-[#132F63] mb-4">Datos del Empleador</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="nit" class="block text-sm font-medium text-gray-700">NIT de la Empresa</label>
+                                <input type="text" id="nit" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 900000000" aria-label="NIT del Empleador" required>
+                            </div>
+                            <div>
+                                <label for="razonSocial" class="block text-sm font-medium text-gray-700">Razón Social</label>
+                                <input type="text" id="razonSocial" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: Hotel Ejemplo S.A.S." aria-label="Razón Social" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Datos del Empleado -->
+                    <div>
+                        <h2 class="text-2xl font-bold text-[#132F63] mb-4">Datos del Empleado</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <label for="nombreEmpleado" class="block text-sm font-medium text-gray-700">Nombre del Empleado</label>
+                                <input type="text" id="nombreEmpleado" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: Juan Pérez" aria-label="Nombre del Empleado" required>
+                            </div>
+                            <div>
+                                <label for="tipoDocumento" class="block text-sm font-medium text-gray-700">Tipo de Documento</label>
+                                <select id="tipoDocumento" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" aria-label="Tipo de Documento" required>
+                                    <option value="CC">Cédula de Ciudadanía (CC)</option>
+                                    <option value="CE">Cédula de Extranjería (CE)</option>
+                                    <option value="PA">Pasaporte (PA)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="identificacion" class="block text-sm font-medium text-gray-700">Número de Documento</label>
+                                <input type="text" id="identificacion" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 12345678" aria-label="Número de Identificación" required>
+                            </div>
+                            <div>
+                                <label for="salarioBase" class="block text-sm font-medium text-gray-700">Salario Básico Mensual</label>
+                                <input type="number" id="salarioBase" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 1500000" aria-label="Salario Básico" required>
+                            </div>
+                            <div>
+                                <label for="cargo" class="block text-sm font-medium text-gray-700">Cargo</label>
+                                <input type="text" id="cargo" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: Gerente" aria-label="Cargo del Empleado" required>
+                            </div>
+                            <div>
+                                <label for="fechaIngreso" class="block text-sm font-medium text-gray-700">Fecha de Ingreso</label>
+                                <input type="date" id="fechaIngreso" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" aria-label="Fecha de Ingreso del Empleado" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Datos de la Nómina -->
+                    <div>
+                        <h2 class="text-2xl font-bold text-[#132F63] mb-4">Datos de la Nómina</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <label for="periodo" class="block text-sm font-medium text-gray-700">Período de Nómina</label>
+                                <select id="periodo" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" aria-label="Período de Nómina" required>
+                                    <option value="quincenal">Quincenal</option>
+                                    <option value="mensual">Mensual</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="fechaPago" class="block text-sm font-medium text-gray-700">Fecha de Pago</label>
+                                <input type="date" id="fechaPago" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" aria-label="Fecha de Pago" required>
+                            </div>
+                            <div>
+                                <label for="diasTrabajados" class="block text-sm font-medium text-gray-700">Días Trabajados</label>
+                                <input type="number" id="diasTrabajados" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 15" aria-label="Días Trabajados" required>
+                            </div>
+                        </div>
+
+                        <!-- Sección de Devengos -->
+                        <h3 class="text-xl font-semibold text-[#132F63] mt-8 mb-4">Devengos (Ingresos)</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="horasExtras" class="block text-sm font-medium text-gray-700">Horas Extras</label>
+                                <input type="number" id="horasExtras" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 200000" aria-label="Valor Horas Extras">
+                            </div>
+                            <div>
+                                <label for="comisiones" class="block text-sm font-medium text-gray-700">Comisiones</label>
+                                <input type="number" id="comisiones" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 500000" aria-label="Valor Comisiones">
+                            </div>
+                        </div>
+
+                        <!-- Sección de Deducciones -->
+                        <h3 class="text-xl font-semibold text-[#132F63] mt-8 mb-4">Deducciones (Egresos)</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="salud" class="block text-sm font-medium text-gray-700">Salud (4%)</label>
+                                <input type="number" id="salud" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 60000" aria-label="Valor Salud">
+                            </div>
+                            <div>
+                                <label for="pension" class="block text-sm font-medium text-gray-700">Pensión (4%)</label>
+                                <input type="number" id="pension" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 60000" aria-label="Valor Pensión">
+                            </div>
+                            <div>
+                                <label for="prestamo" class="block text-sm font-medium text-gray-700">Préstamos</label>
+                                <input type="number" id="prestamo" class="mt-1 block w-full rounded-md shadow-sm p-2.5 input-field" placeholder="Ej: 100000" aria-label="Valor Préstamos">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="md:col-span-2 mt-8 flex justify-center">
+                        <button type="submit" class="bg-[#132F63] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-[#1f4a9b] transition-colors">
+                            Generar XML
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Área para mostrar el XML generado -->
+                <div id="xmlOutput" class="hidden mt-10 p-6 bg-gray-100 rounded-lg border border-gray-300">
+                    <h3 class="text-xl font-bold text-[#132F63] mb-4">XML de Nómina Generado</h3>
+                    <pre id="xmlContent" class="whitespace-pre-wrap break-words text-sm text-gray-800"></pre>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('nominaForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Obtener valores del formulario
+            const nit = document.getElementById('nit').value;
+            const razonSocial = document.getElementById('razonSocial').value;
+            const nombreEmpleado = document.getElementById('nombreEmpleado').value;
+            const tipoDocumento = document.getElementById('tipoDocumento').value;
+            const identificacion = document.getElementById('identificacion').value;
+            const salarioBase = parseFloat(document.getElementById('salarioBase').value) || 0;
+            const cargo = document.getElementById('cargo').value;
+            const fechaIngreso = document.getElementById('fechaIngreso').value;
+            const periodo = document.getElementById('periodo').value;
+            const fechaPago = document.getElementById('fechaPago').value;
+            const diasTrabajados = parseInt(document.getElementById('diasTrabajados').value) || 0;
+            const horasExtras = parseFloat(document.getElementById('horasExtras').value) || 0;
+            const comisiones = parseFloat(document.getElementById('comisiones').value) || 0;
+            const salud = parseFloat(document.getElementById('salud').value) || 0;
+            const pension = parseFloat(document.getElementById('pension').value) || 0;
+            const prestamo = parseFloat(document.getElementById('prestamo').value) || 0;
+
+            // Lógica para calcular totales
+            const totalDevengos = salarioBase + horasExtras + comisiones;
+            const totalDeducciones = salud + pension + prestamo;
+            const totalPagar = totalDevengos - totalDeducciones;
+
+            // Construir el string XML
+            const xml = `
+<NominaElectronica>
+    <Empleador>
+        <NIT>${nit}</NIT>
+        <RazonSocial>${razonSocial}</RazonSocial>
+    </Empleador>
+    <Empleado>
+        <Nombre>${nombreEmpleado}</Nombre>
+        <TipoDocumento>${tipoDocumento}</TipoDocumento>
+        <Identificacion>${identificacion}</Identificacion>
+        <SalarioBase>${salarioBase}</SalarioBase>
+        <Cargo>${cargo}</Cargo>
+        <FechaIngreso>${fechaIngreso}</FechaIngreso>
+    </Empleado>
+    <DetallesNomina>
+        <Periodo>${periodo}</Periodo>
+        <FechaPago>${fechaPago}</FechaPago>
+        <DiasTrabajados>${diasTrabajados}</DiasTrabajados>
+        <Devengos>
+            <Salario>${salarioBase}</Salario>
+            <HorasExtras>${horasExtras}</HorasExtras>
+            <Comisiones>${comisiones}</Comisiones>
+        </Devengos>
+        <Deducciones>
+            <Salud>${salud}</Salud>
+            <Pension>${pension}</Pension>
+            <Prestamo>${prestamo}</Prestamo>
+        </Deducciones>
+        <Totales>
+            <TotalDevengos>${totalDevengos}</TotalDevengos>
+            <TotalDeducciones>${totalDeducciones}</TotalDeducciones>
+            <TotalPagar>${totalPagar}</TotalPagar>
+        </Totales>
+    </DetallesNomina>
+</NominaElectronica>
+            `.trim();
+
+            // Mostrar el XML en la página
+            const xmlOutputDiv = document.getElementById('xmlOutput');
+            const xmlContentPre = document.getElementById('xmlContent');
+            xmlContentPre.textContent = xml;
+            xmlOutputDiv.style.display = 'block';
+
+            // Resaltar la sintaxis del XML (opcional, pero útil)
+            xmlContentPre.innerHTML = xmlContentPre.innerHTML
+                .replace(/&lt;(\/?\w+)/g, '<span class="text-blue-600 font-bold">&lt;$1</span>')
+                .replace(/&gt;/g, '<span class="text-blue-600 font-bold">&gt;</span>')
+                .replace(/&amp;/g, '&'); // Corrige la entidad &amp;
+        });
+
+    </script>
 </body>
 </html>
+
