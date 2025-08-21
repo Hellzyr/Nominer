@@ -9,17 +9,14 @@
 
     <!-- 
         Carga las librerías de Firebase, React y Babel.
-        El orden es crucial: primero las dependencias, luego nuestro script.
+        El orden es crucial: primero las dependencias.
     -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-    
-    <!-- Carga React y ReactDOM para que el script.js funcione -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react.development.js" crossorigin></script>
-    <!-- Carga Babel para transpilar el JSX en el navegador -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body class="bg-gray-100 flex min-h-screen">
 
@@ -36,4 +33,5 @@
     <script type="text/babel" src="script.js"></script>
 </body>
 </html>
+
 
