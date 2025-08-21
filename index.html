@@ -4,34 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Software de Nómina</title>
-    <!-- Carga los estilos CSS -->
+    <!-- Carga los estilos de la aplicación -->
     <link rel="stylesheet" href="styles.css">
-
-    <!-- 
-        Carga las librerías de Firebase, React y Babel.
-        El orden es crucial: primero las dependencias.
-    -->
+    
+    <!-- Carga las bibliotecas de React y Babel -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Carga las bibliotecas de Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 </head>
 <body class="bg-gray-100 flex min-h-screen">
-
-    <!-- Este es el contenedor donde se cargará la aplicación de React -->
     <div id="root" class="flex-1 flex flex-col items-center justify-center">
         <!-- Contenido inicial que se mostrará mientras carga React -->
         <p class="text-center text-gray-500 text-xl font-semibold">Cargando la aplicación...</p>
     </div>
-
+    
     <!-- 
-        Carga nuestro archivo de lógica de React. 
-        Le indicamos al navegador que use Babel para procesar el código.
+        Carga el archivo de la aplicación.
+        Utiliza "text/babel" para que el navegador lo compile.
     -->
     <script type="text/babel" src="script.js"></script>
 </body>
 </html>
+
+
 
 
